@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottomNavFragmentCloset"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/closet_bottom_nav_item_title"/>
+    <item
+        android:id="@+id/bottomNavFragmentLaundry"
+        android:icon="@drawable/ic_exposure_plus_1_black_24dp"
+        android:title="@string/laundry_bottom_nav_title"/>
+    <item
+        android:id="@+id/bottomNavFragmentStats"
+        android:icon="@drawable/ic_exposure_plus_2_black_24dp"
+        android:title="@string/stats_bottom_nav_title"/>
+    <item
+        android:id="@+id/bottomNavFragmentAccount"
+        android:icon="@drawable/ic_exposure_plus_2_black_24dp"
+        android:title="@string/account_bottom_nav_title"/>
+
+</menu>

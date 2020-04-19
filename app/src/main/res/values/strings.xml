@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">MiniClo</string>
+    <string name="bottomnav_menu_title">BottomNav</string>
+    <string name="info_menu_title">Info</string>
+    <string name="closet_bottom_nav_item_title">Closet</string>
+    <string name="laundry_bottom_nav_title">Laundry</string>
+    <string name="stats_bottom_nav_title">Stats</string>
+    <string name="account_bottom_nav_title">Account</string>
+    <string name="closet_toolbar_title">My Closet</string>
+    <string name="laundry_toolbar_title">My Laundry</string>
+    <string name="stats_toolbar_title">My Closet Stats</string>
+    <string name="account_toolbar_title">My Account</string>
+    <string name="info_text">Sample app showcasing use of NavigationUI library to hook two material components BottomNavigationView and NavigationView with nav graph.\n\nFind the source code on github at https://github.com/sagar-viradiya/NavigationUIDemo</string>
+    <string name="nav_header_1">Jetpack</string>
+    <string name="nav_header_2">Navigation</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
