@@ -49,6 +49,7 @@ public class AddItem extends AppCompatActivity {
     StorageReference mStorageRef;
     public Uri imguri;
     public Item item;
+    public String res;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
@@ -173,7 +174,7 @@ public class AddItem extends AppCompatActivity {
                     public void onSuccess(List<FirebaseVisionImageLabel> labels) {
                         Toast.makeText(AddItem.this,
                                 "Image successfully pass into vision api", Toast.LENGTH_LONG).show();
-                        String res = "";
+                        res = "";
                         for (FirebaseVisionImageLabel label: labels) {
                             String text = label.getText();
                             String entityId = label.getEntityId();
@@ -193,7 +194,7 @@ public class AddItem extends AppCompatActivity {
                                         // Get a URL to the uploaded content
 //                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
                                         Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
-                                        toItemDetail(view, finalRes);
+                                        toItemDetail(view);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -245,7 +246,7 @@ public class AddItem extends AppCompatActivity {
         }
     }
 
-    public void toItemDetail(View view, String res) {
+    public void toItemDetail(View view) {
         Intent intent = new Intent(this, ItemDetail.class);
         intent.putExtra("message", res);
         intent.putExtra("imguri", imguri.toString());

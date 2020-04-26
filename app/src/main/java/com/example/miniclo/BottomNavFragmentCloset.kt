@@ -92,7 +92,7 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
 
         //REFERENCE MATERIALSEARCHBAR AND LISTVIEW
         //val lv = android.R.layout.mListView as ListView
-        val lv = mListView
+//        val lv = mListView
         //val searchBar = android.R.layout.searchBar as MaterialSearchBar
         val searchBar = searchBar
         searchBar.setHint("Search..")
@@ -102,7 +102,7 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
 
         //ADAPTER
         val adapter = ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, galaxies)
-        lv?.setAdapter(adapter)
+//        lv?.setAdapter(adapter)
 
         //SEARCHBAR TEXT CHANGE LISTENER
         searchBar?.addTextChangeListener(object : TextWatcher {
@@ -121,11 +121,11 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         })
 
         //LISTVIEW ITEM CLICKED
-        lv?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-            override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                Toast.makeText(activity, "Hi"/*adapter.getItem(i)!!.toString()*/, Toast.LENGTH_SHORT).show()
-            }
-        })
+//        lv?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+//            override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+//                Toast.makeText(activity, "Hi"/*adapter.getItem(i)!!.toString()*/, Toast.LENGTH_SHORT).show()
+//            }
+//        })
 
         //end
     }

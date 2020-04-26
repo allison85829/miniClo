@@ -50,11 +50,11 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ListView
-        android:id="@+id/mListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
+<!--    <ListView-->
+<!--        android:id="@+id/mListView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+<!--    </ListView>-->
 
     <!--
     <ImageView

@@ -19,9 +19,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.category
-import kotlinx.android.synthetic.main.activity_main.date_added
-import kotlinx.android.synthetic.main.activity_main.tags
+
+//import kotlinx.android.synthetic.main.activity_main.category
+//import kotlinx.android.synthetic.main.activity_main.date_added
+//import kotlinx.android.synthetic.main.activity_main.tags
+
 import java.io.File
 
 import android.os.Handler
@@ -80,15 +82,6 @@ class MainActivity : AppCompatActivity() {
             Navigation.findNavController(this, R.id.mainNavFragment), drawerLayout)
     }
 
-    /*lateinit var navController: NavController
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        itemReference = Firebase.database.reference.child("/items")
-    }
-
     public override fun onStart() {
         super.onStart()
 
@@ -99,16 +92,15 @@ class MainActivity : AppCompatActivity() {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val item: Item? = dataSnapshot.child("1").getValue<Item>()
-                category.text = item?.category
-                date_added.text = item?.date_added
-                var t = ""
-                for (tag in item?.tags!!) {
-                    t += tag + ", "
-                }
-                tags.text = t
-                laundry_status.text = item?.laundry_status.toString()
-                worn_frequency.text = item?.worn_frequency.toString()
-
+//                category.text = item?.category
+//                date_added.text = item?.date_added
+//                var t = ""
+//                for (tag in item?.tags!!) {
+//                    t += tag + ", "
+//                }
+//                tags.text = t
+//                laundry_status.text = item?.laundry_status.toString()
+//                worn_frequency.text = item?.worn_frequency.toString()
             }
         }
 
@@ -129,50 +121,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-        setupViews()
-    }
 
-    fun setupViews()
-    {
-        var navHostFragment = supportFragmentManager.findFragmentById(R.id.mainNavFragment) as NavHostFragment
-        navController = navHostFragment.navController
-        NavigationUI.setupWithNavController(bottomNavView, navHostFragment.navController)
-
-        //var appBarConfiguration = AppBarConfiguration(navHostFragment.navController.graph)
-        var appBarConfiguration = AppBarConfiguration(setOf(R.id.bottomNavFragmentCloset, R.id.bottomNavFragmentLaundry, R.id.bottomNavFragmentStats, R.id.bottomNavFragmentAccount))
-        setupActionBarWithNavController(navHostFragment.navController, appBarConfiguration)
-    }
-
-    fun showBottomNavigation()
-    {
-        bottomNavView.visibility = View.VISIBLE
-    }
-
-    fun hideBottomNavigation()
-    {
-        bottomNavView.visibility = View.GONE
-    }
-
-    private var backPressedOnce = false
-
-    override fun onBackPressed() {
-        if (navController.graph.startDestination == navController.currentDestination?.id)
-        {
-            if (backPressedOnce)
-            {
-                super.onBackPressed()
-                return
-            }
-
-            backPressedOnce = true
-            Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
-
-            Handler().postDelayed(2000) {
-                backPressedOnce = false
-            }
-        }
-        else {
-            super.onBackPressed()
-        }
-    }*/
 }
