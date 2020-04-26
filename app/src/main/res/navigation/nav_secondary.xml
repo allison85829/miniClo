@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_secondary"
+    app:startDestination="@id/bottomNavFragmentCloset"
+    app:labelVisibilityMode="labeled">
+
+    <fragment
+        android:id="@+id/bottomNavFragmentCloset"
+        android:name="com.example.miniclo.BottomNavFragmentCloset"
+        android:label="@string/closet_toolbar_title"
+        tools:layout="@layout/fragment_bottom_nav_fragment_closet"/>
+
+    <fragment
+        android:id="@+id/bottomNavFragmentLaundry"
+        android:name="com.example.miniclo.BottomNavFragmentLaundry"
+        android:label="@string/laundry_toolbar_title"
+        tools:layout="@layout/fragment_bottom_nav_fragment_laundry"/>
+
+    <fragment
+        android:id="@+id/bottomNavFragmentStats"
+        android:name="com.example.miniclo.BottomNavFragmentStats"
+        android:label="@string/stats_toolbar_title"
+        tools:layout="@layout/fragment_bottom_nav_fragment_stats"/>
+
+    <fragment
+        android:id="@+id/bottomNavFragmentAccount"
+        android:name="com.example.miniclo.BottomNavFragmentAccount"
+        android:label="@string/account_toolbar_title"
+        tools:layout="@layout/fragment_bottom_nav_fragment_account"/>
+
+</navigation>

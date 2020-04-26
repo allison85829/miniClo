@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BottomNavFragmentCloset">
+    <!-- Filter Option -->
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/action_filter"
+        app:showAsAction="ifRoom"/>
+
+    <!-- Overflow Options -->
+    <item
+        android:id="@+id/action_options"
+        android:title="@string/action_options"
+        app:showAsAction="never"/>
+</menu>
