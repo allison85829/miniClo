@@ -14,19 +14,33 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 //import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.AppBarConfiguration
+import com.google.firebase.auth.FirebaseAuth
+import android.content.Intent
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+
+        if(auth.currentUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }else{
+            Toast.makeText(this, "Already logged in", Toast.LENGTH_LONG).show()
+        }
         setContentView(R.layout.activity_main)
 
         val navController = findNavController(R.id.mainNavFragment)
 
         // Set up ActionBar
-        setSupportActionBar(toolbar)
-        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
+        //setSupportActionBar(toolbar)
+        //NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
+
         //var appBarConfiguration = AppBarConfiguration(setOf(R.id.bottomNavFragmentCloset, R.id.bottomNavFragmentLaundry, R.id.bottomNavFragmentStats, R.id.bottomNavFragmentAccount))
         //setupActionBarWithNavController(navController, appBarConfiguration)
 
