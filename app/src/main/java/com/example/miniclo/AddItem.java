@@ -1,39 +1,59 @@
 package com.example.miniclo;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ktx.Firebase;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
+import java.util.List;
+
 public class AddItem extends AppCompatActivity {
 
+    private static final int REQUEST_TO_DETAIL = 3;
     Button select, upload, take_photo;
     ImageView img;
     StorageReference mStorageRef;
     public Uri imguri;
+    public Item item;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
+    private static final String CAMERA_ID = "my_camera_id";
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +74,14 @@ public class AddItem extends AppCompatActivity {
         });
 
         upload.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
-                FileUploader();
+                try {
+                    FileUploader(view);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -99,7 +124,7 @@ public class AddItem extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.i("---------- Msg", Integer.toString(requestCode));
         if (requestCode==2 && resultCode==RESULT_OK && data!=null && data.getData()!=null ) {
             imguri = data.getData();
             img.setImageURI(imguri);
@@ -108,7 +133,14 @@ public class AddItem extends AppCompatActivity {
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
             img.setImageURI(imguri);
-
+        }
+        if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
+            TextView textView = (TextView)findViewById(R.id.item_detail);
+            ImageView res_img = (ImageView)findViewById(R.id.detail_img);
+            String detail = data.getStringExtra("message");
+            textView.setText(detail);
+            Log.i("---------- Msg", detail);
+            res_img.setImageURI(imguri);
         }
     }
 
@@ -118,22 +150,65 @@ public class AddItem extends AppCompatActivity {
         return mimeTypeMap.getExtensionFromMimeType(cr.getType(uri));
     }
 
-    private void FileUploader() {
-        StorageReference Ref = mStorageRef.child(System.currentTimeMillis() + "." + getExtension(imguri));
-        Ref.putFile(imguri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void FileUploader(View view) throws CameraAccessException {
+        // Uploading file to Storage
+        String file_name = System.currentTimeMillis() + "." + getExtension(imguri);
+        StorageReference Ref = mStorageRef.child(file_name);
+
+        FirebaseVisionImage image = null;
+        try {
+            image = FirebaseVisionImage.fromFilePath(AddItem.this, imguri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance().getCloudImageLabeler();
+        VisionImage vision_img = new VisionImage();
+        int rotation = vision_img.getRotationCompensation("1", AddItem.this, AddItem.this);
+
+        labeler.processImage(image)
+                .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-//                        Uri downloadUrl = taskSnapshot.getResult();
-                        Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
+                    public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+                        Toast.makeText(AddItem.this,
+                                "Image successfully pass into vision api", Toast.LENGTH_LONG).show();
+                        String res = "";
+                        for (FirebaseVisionImageLabel label: labels) {
+                            String text = label.getText();
+                            String entityId = label.getEntityId();
+                            float confidence = label.getConfidence();
+
+                            res += text + ", " + entityId + ", " + confidence + "\n";
+                        }
+                        Toast.makeText(AddItem.this,
+                                res, Toast.LENGTH_LONG).show();
+
+                        String finalRes = res;
+
+                        Ref.putFile(imguri)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        // Get a URL to the uploaded content
+//                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                        Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
+                                        toItemDetail(view, finalRes);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Handle unsuccessful uploads
+                                        // ...
+                                    }
+                                });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        // ...
+                    public void onFailure(@NonNull Exception e) {
+
                     }
                 });
     }
@@ -168,6 +243,13 @@ public class AddItem extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void toItemDetail(View view, String res) {
+        Intent intent = new Intent(this, ItemDetail.class);
+        intent.putExtra("message", res);
+        intent.putExtra("imguri", imguri.toString());
+        startActivityForResult(intent, REQUEST_TO_DETAIL);
     }
 
 }
