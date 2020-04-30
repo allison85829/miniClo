@@ -17,12 +17,46 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import com.mancj.materialsearchbar.MaterialSearchBar
+
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.widget.EditText
+import androidx.constraintlayout.solver.widgets.Snapshot
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+
+//import kotlinx.android.synthetic.main.activity_main.category
+//import kotlinx.android.synthetic.main.activity_main.date_added
+//import kotlinx.android.synthetic.main.activity_main.tags
+
+import java.io.File
+
+import android.os.Handler
 
 /**
  * A simple [Fragment] subclass.
  */
 class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
+    //        create an instance of Firebase Database
+    private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
+    //        reference to the root node
+    private lateinit var itemReference : DatabaseReference
+
+    private lateinit var itemListener: ValueEventListener
+
+    private lateinit var storage: FirebaseStorage
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -130,6 +164,52 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         //end
     }
 
+    public override fun onStart() {
+        super.onStart()
+
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val item: Item? = dataSnapshot.child("1").getValue<Item>()
+//                category.text = item?.category
+//                date_added.text = item?.date_added
+//                var t = ""
+//                for (tag in item?.tags!!) {
+//                    t += tag + ", "
+//                }
+//                tags.text = t
+//                laundry_status.text = item?.laundry_status.toString()
+//                worn_frequency.text = item?.worn_frequency.toString()
+            }
+        }
+
+        itemReference = Firebase.database.reference.child("/items")
+        itemReference.addValueEventListener(itemListener)
+        this.itemListener = itemListener
+        val tags_lst = listOf<String>("Red", "White", "Short-sleeve")
+        val new_item : Item = Item("Dress", "04-21-2020", "img3.jpg", false, 10, tags_lst)
+        itemReference.child("3").setValue(new_item)
+
+        add_item_button.setOnClickListener{
+            val intent = Intent(activity, AddItem::class.java)
+            startActivity(intent)
+        }
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        itemReference.removeEventListener(this.itemListener)
+    }
+
+    /*
+    fun addItem(view: View) {
+        val intent = Intent(activity, AddItem::class.java)
+        startActivity(intent)
+    }
+    */
     /*
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.closet_menu_options, menu)

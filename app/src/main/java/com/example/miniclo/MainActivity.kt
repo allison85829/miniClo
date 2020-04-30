@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(
             Navigation.findNavController(this, R.id.mainNavFragment), drawerLayout)
     }
-
+/*
     public override fun onStart() {
         super.onStart()
 
@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        itemReference = Firebase.database.reference.child("/items")
         itemReference.addValueEventListener(itemListener)
         this.itemListener = itemListener
         val tags_lst = listOf<String>("Red", "White", "Short-sleeve")
@@ -120,6 +121,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, AddItem::class.java)
         startActivity(intent)
     }
-
+*/
 
 }
