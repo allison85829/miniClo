@@ -1,7 +1,9 @@
 package com.example.miniclo
 
+import com.bumptech.glide.Glide
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -25,8 +27,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 //import kotlinx.android.synthetic.main.activity_main.tags
 
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 import android.os.Handler
+import android.widget.ImageView
+import androidx.annotation.RequiresApi
 
 import androidx.core.os.postDelayed
 import androidx.navigation.NavController
@@ -38,6 +44,7 @@ import androidx.navigation.ui.setupWithNavController
 //import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.AppBarConfiguration
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,10 +57,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
+    val user : FirebaseUser? = FirebaseAuth.getInstance().getCurrentUser()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
+
+        itemReference = Firebase.database.reference.child("/items")
 
         if(auth.currentUser == null){
             val intent = Intent(this, LoginActivity::class.java)
@@ -90,25 +100,31 @@ class MainActivity : AppCompatActivity() {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val item: Item? = dataSnapshot.child("1").getValue<Item>()
-//                category.text = item?.category
-//                date_added.text = item?.date_added
-//                var t = ""
-//                for (tag in item?.tags!!) {
-//                    t += tag + ", "
-//                }
-//                tags.text = t
-//                laundry_status.text = item?.laundry_status.toString()
-//                worn_frequency.text = item?.worn_frequency.toString()
+
+                val item: Item? = dataSnapshot.child("-M67mYjnX315Q4abm4Xj").getValue<Item>()
+                if (item != null) {
+                    val img : ImageView = findViewById<ImageView>(R.id.item_img)
+//                    val httpsReference : StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(item.image)
+//                    Log.i("URL from httpReference " , httpsReference.toString())
+//                    Log.i("URL from item.image " , item.image.toString())
+                    if ( user != null ) {
+                        Log.i("User ", user.getEmail())
+                    }
+
+                    Glide.with(this@MainActivity)
+                        .load(item.image)
+                        .into(img)
+                }
             }
         }
 
         itemReference.addValueEventListener(itemListener)
         this.itemListener = itemListener
-        val tags_lst = listOf<String>("Red", "White", "Short-sleeve")
-        val new_item : Item = Item("Dress", "04-21-2020", "img3.jpg", false, 10, tags_lst)
-        itemReference.child("3").setValue(new_item)
+//        val tags_lst = listOf<String>("Red", "White", "Short-sleeve")
+//        val new_item : Item = Item("Dress", "04-21-2020", "img3.jpg", false, 10, tags_lst)
+//        itemReference.child("3").setValue(new_item)
     }
 
     public override fun onStop() {

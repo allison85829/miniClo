@@ -23,18 +23,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.275" />
 
-    <Button
-        android:id="@+id/add_item_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
-        android:onClick="addItem"
-        android:text="Add Item"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome_msg"
-        tools:ignore="MissingConstraints" />
+<!--    <Button-->
+<!--        android:id="@+id/add_item_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="88dp"-->
+<!--        android:onClick="addItem"-->
+<!--        android:text="Add Item"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/welcome_msg"-->
+<!--        app:layout_constraintHorizontal_bias="0.52"-->
+<!--        app:layout_constraintStart_toStartOf="@id/welcome_msg"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/welcome_msg"-->
+<!--        tools:ignore="MissingConstraints" />-->
 
     <!-- <TextView
         android:id="@+id/category"
@@ -111,13 +111,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/add_item_button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="88dp"
+            android:onClick="addItem"
+            android:text="Add Item"/>
+
+        <ImageView
+            android:id="@+id/item_img"
+            android:layout_width="match_parent"
+            android:layout_height="164dp"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
+
         <fragment
             android:id="@+id/mainNavFragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="370dp"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_main"/>
+            app:navGraph="@navigation/nav_main" />
 
     </LinearLayout>
 
