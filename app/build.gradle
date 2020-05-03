@@ -79,3 +79,7 @@ android {
         implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
     }
 }
+
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:+'
+}
