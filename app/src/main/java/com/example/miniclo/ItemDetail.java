@@ -27,5 +27,8 @@ public class ItemDetail extends AppCompatActivity {
         res_img = (ImageView)findViewById(R.id.detail_img);
         detail_text.setText(detail);
         res_img.setImageURI(Uri.parse(imguri));
+
+
+
     }
 }

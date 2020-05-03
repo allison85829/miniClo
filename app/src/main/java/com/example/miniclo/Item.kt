@@ -11,8 +11,7 @@ data class Item(
     var image: String = "",
     var laundry_status: Boolean = false,
     var worn_frequency: Int = 0,
-    var tags: List<String> = listOf<String>(),
-    var user: String = ""
+    var tags: List<String> = listOf<String>()
 ) {
     @Exclude
     fun toMap(): Map<String, Any?> {
@@ -22,8 +21,7 @@ data class Item(
             "image" to image,
             "laundry_status" to laundry_status,
             "worn_frequency" to worn_frequency,
-            "tags" to tags,
-            "user" to user
+            "tags" to tags
         )
     }
 }
