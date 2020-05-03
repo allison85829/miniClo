@@ -1,14 +1,18 @@
 package com.example.miniclo
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.renderscript.Sampler
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class SignupActivity : AppCompatActivity() {
 
@@ -19,6 +23,11 @@ class SignupActivity : AppCompatActivity() {
 
     private lateinit var signUpBtn: Button
     private lateinit var loginBtn: Button
+
+    private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance();
+    private lateinit var userReference: DatabaseReference
+    private lateinit var userListener: ValueEventListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +41,19 @@ class SignupActivity : AppCompatActivity() {
         loginBtn = findViewById(R.id.login_btn)
         signUpBtn = findViewById(R.id.signup_btn)
 
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+            }
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        }
+//        userReference = Firebase.database.reference.child("users")
+        userReference = mDatabase.getReference().child("/users")
+        userReference.addValueEventListener(userListener)
+
+
         signUpBtn.setOnClickListener{
             var email: String = emailEt.text.toString()
             var password: String = passwordEt.text.toString()
@@ -39,9 +61,20 @@ class SignupActivity : AppCompatActivity() {
             if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_LONG).show()
             } else{
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener{ task ->
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener { task ->
                     if(task.isSuccessful){
                         Toast.makeText(this, "Successfully Registered", Toast.LENGTH_LONG).show()
+                        // create a new user object in Realtime Database
+                        val user = auth.currentUser
+                        val newUser : User = User()
+                        if (user != null) {
+                            newUser.email = email
+                            newUser.uid = user.uid
+                            newUser.item_list = listOf<String>()
+                        }
+
+                        userReference.child(newUser.uid).setValue(newUser)
+
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
                         finish()

@@ -9,76 +9,119 @@
     android:layout_height="match_parent"
     tools:context=".BottomNavFragmentCloset">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="-28dp"
+        tools:layout_editor_absoluteY="29dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_closet"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <TextView
-                android:id="@+id/toolbar_closet_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:singleLine="true"
-                android:text="My Closet"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.mancj.materialsearchbar.MaterialSearchBar
-            app:mt_speechMode="true"
-            app:mt_hint="Custom hint"
-            app:theme="@style/AppTheme.PopupOverlay"
-            app:mt_maxSuggestionsCount="5"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/searchBar" />
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_closet"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <TextView
-        android:id="@+id/welcome_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to MiniClo"
-        android:textColor="#03A9F4"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.567"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.275" />
+                <TextView
+                    android:id="@+id/toolbar_closet_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:singleLine="true"
+                    android:text="My Closet"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/add_item_button"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="88dp"
-        android:text="Add Item"/>
+            </androidx.appcompat.widget.Toolbar>
+
+            <com.mancj.materialsearchbar.MaterialSearchBar
+                android:id="@+id/searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:mt_hint="Custom hint"
+                app:mt_maxSuggestionsCount="5"
+                app:mt_speechMode="true"
+                app:theme="@style/AppTheme.PopupOverlay" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <TextView
+            android:id="@+id/welcome_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome to MiniClo"
+            android:textColor="#03A9F4"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.567"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.275" />
+
+        <ImageView
+            android:id="@+id/item_img"
+            android:layout_width="326dp"
+            android:layout_height="248dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            tools:src="@android:drawable/ic_menu_gallery" />
+
+        <TextView
+            android:id="@+id/tags_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:text="Tags"
+            android:textColor="#3F51B5" />
+
+        <TextView
+            android:id="@+id/worn_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:text="Worn  Frequency"
+            android:textColor="#3F51B5" />
+
+        <TextView
+            android:id="@+id/date_added_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:text="Date Added"
+            android:textColor="#3F51B5" />
+
+        <Button
+            android:id="@+id/add_item_button"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:layout_marginTop="60dp"
+            android:text="Add Item" />
 
 
-<!--    <ListView-->
-<!--        android:id="@+id/mListView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
-<!--    </ListView>-->
+        <!--    <ListView-->
+        <!--        android:id="@+id/mListView"-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:layout_height="match_parent">-->
+        <!--    </ListView>-->
 
-    <!--
+        <!--
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="200dp"
@@ -86,6 +129,6 @@
         android:src="@drawable/jetpack_chart"/>
     -->
 
-</LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

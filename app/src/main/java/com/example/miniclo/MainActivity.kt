@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter
 
 import android.os.Handler
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 
 import androidx.core.os.postDelayed
@@ -58,6 +59,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
     val user : FirebaseUser? = FirebaseAuth.getInstance().getCurrentUser()
+
+    lateinit var tags : TextView
+    lateinit var date_added : TextView
+    lateinit var worn_frequency : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(
             Navigation.findNavController(this, R.id.mainNavFragment), drawerLayout)
     }
-/*
+
     public override fun onStart() {
         super.onStart()
 
@@ -106,13 +111,18 @@ class MainActivity : AppCompatActivity() {
                 val item: Item? = dataSnapshot.child("-M67mYjnX315Q4abm4Xj").getValue<Item>()
                 if (item != null) {
                     val img : ImageView = findViewById<ImageView>(R.id.item_img)
-//                    val httpsReference : StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(item.image)
-//                    Log.i("URL from httpReference " , httpsReference.toString())
-//                    Log.i("URL from item.image " , item.image.toString())
-                    if ( user != null ) {
-                        Log.i("User ", user.getEmail())
+                    tags = findViewById(R.id.tags_text)
+                    var tg = ""
+                    for (t in item.tags) {
+                        tg += ", " + t
                     }
+                    tags.setText("Tags: " + tg)
 
+                    date_added = findViewById(R.id.date_added_text)
+                    date_added.setText(item.date_added)
+
+                    worn_frequency = findViewById(R.id.worn_frequency)
+                    worn_frequency.setText(item.worn_frequency.toString())
                     Glide.with(this@MainActivity)
                         .load(item.image)
                         .into(img)
@@ -123,9 +133,6 @@ class MainActivity : AppCompatActivity() {
         itemReference = Firebase.database.reference.child("/items")
         itemReference.addValueEventListener(itemListener)
         this.itemListener = itemListener
-//        val tags_lst = listOf<String>("Red", "White", "Short-sleeve")
-//        val new_item : Item = Item("Dress", "04-21-2020", "img3.jpg", false, 10, tags_lst)
-//        itemReference.child("3").setValue(new_item)
     }
 
     public override fun onStop() {
@@ -137,6 +144,4 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, AddItem::class.java)
         startActivity(intent)
     }
-*/
-
 }

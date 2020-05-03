@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class ItemDetail extends AppCompatActivity {
     TextView detail_text;
-    ImageView res_img;
+    ImageView res_img, upload_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +25,7 @@ public class ItemDetail extends AppCompatActivity {
         Log.i(" ********** Msg", imguri);
         detail_text = (TextView)findViewById(R.id.item_detail);
         res_img = (ImageView)findViewById(R.id.detail_img);
+
         detail_text.setText(detail);
         res_img.setImageURI(Uri.parse(imguri));
     }
