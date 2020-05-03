@@ -1,8 +1,7 @@
-package com.example.miniclo
+package com.example.miniclo.com.example.miniclo
 
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.Exclude
-import java.util.HashMap
 
 @IgnoreExtraProperties
 data class User(

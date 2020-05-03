@@ -77,5 +77,7 @@ android {
 
         // Search bar
         implementation 'com.github.mancj:MaterialSearchBar:0.7.1'
+
+        implementation 'com.firebaseui:firebase-ui-storage:6.2.0'
     }
 }

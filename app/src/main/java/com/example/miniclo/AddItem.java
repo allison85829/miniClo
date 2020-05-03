@@ -3,20 +3,14 @@ package com.example.miniclo;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Camera;
-import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,13 +24,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.engine.Resource;
+import com.example.miniclo.com.example.miniclo.User;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.ktx.Firebase;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
@@ -45,9 +46,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.EventListener;
 import java.util.List;
 
 public class AddItem extends AppCompatActivity {
@@ -248,12 +249,15 @@ public class AddItem extends AppCompatActivity {
 
         labeler.processImage(image)
                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onSuccess(List<FirebaseVisionImageLabel> labels) {
                         Toast.makeText(AddItem.this,
                                 "Image successfully pass into vision api", Toast.LENGTH_LONG).show();
                         res = "";
+                        ArrayList<String> tags = new ArrayList<String>();
                         for (FirebaseVisionImageLabel label: labels) {
+                            tags.add(label.getText());
                             String text = label.getText();
                             String entityId = label.getEntityId();
                             float confidence = label.getConfidence();
@@ -271,32 +275,27 @@ public class AddItem extends AppCompatActivity {
                         String finalRes = res;
 
                         Ref.putFile(imguri)
-                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                     @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        // Get a URL to the uploaded content
-//                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                        Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
-                                        toItemDetail(view);
+                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        if (!task.isSuccessful()) {
+                                            throw task.getException();
+                                        }
+                                        return Ref.getDownloadUrl();
                                     }
                                 })
-                                .addOnFailureListener(new OnFailureListener() {
+                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
                                             Uri download = task.getResult();
-                                            // upload item and set up key value pair
-                                            // between user and added item
-                                            UploadItem(download, item);
-
+                                            item.setImage(download.toString());
+                                            itemReference = mDatabase.getReference().child("/items");
+                                            itemReference.push().setValue(item);
                                             Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
                                             toItemDetail(view);
                                         }
                                     }
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Handle unsuccessful uploads
-                                        // ...
-                                    } 
                                 });
                     }
                 })

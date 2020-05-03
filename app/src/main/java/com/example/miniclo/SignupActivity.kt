@@ -2,17 +2,15 @@ package com.example.miniclo
 
 import android.content.Intent
 import android.os.Bundle
-import android.renderscript.Sampler
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.miniclo.com.example.miniclo.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class SignupActivity : AppCompatActivity() {
 
@@ -66,7 +64,8 @@ class SignupActivity : AppCompatActivity() {
                         Toast.makeText(this, "Successfully Registered", Toast.LENGTH_LONG).show()
                         // create a new user object in Realtime Database
                         val user = auth.currentUser
-                        val newUser : User = User()
+                        val newUser : User =
+                            User()
                         if (user != null) {
                             newUser.email = email
                             newUser.uid = user.uid

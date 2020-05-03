@@ -40,6 +40,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 //import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.AppBarConfiguration
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 
 
