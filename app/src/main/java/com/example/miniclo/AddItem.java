@@ -34,14 +34,6 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ktx.Firebase;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions;
@@ -57,8 +49,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.List;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class AddItem extends AppCompatActivity {
 
@@ -218,6 +208,8 @@ public class AddItem extends AppCompatActivity {
             img.setImageURI(imguri);
         }
         if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
             img.setImageURI(imguri);
         }
 
@@ -226,6 +218,8 @@ public class AddItem extends AppCompatActivity {
             ImageView res_img = (ImageView)findViewById(R.id.detail_img);
             String detail = data.getStringExtra("message");
             textView.setText(detail);
+            Log.i("---------- Msg", detail);
+            res_img.setImageURI(imguri);
         }
     }
 
@@ -254,16 +248,12 @@ public class AddItem extends AppCompatActivity {
 
         labeler.processImage(image)
                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onSuccess(List<FirebaseVisionImageLabel> labels) {
                         Toast.makeText(AddItem.this,
                                 "Image successfully pass into vision api", Toast.LENGTH_LONG).show();
                         res = "";
-                        ArrayList<String> tags = new ArrayList<String>();
-                        Item item = new Item();
                         for (FirebaseVisionImageLabel label: labels) {
-                            tags.add(label.getText());
                             String text = label.getText();
                             String entityId = label.getEntityId();
                             float confidence = label.getConfidence();
@@ -272,25 +262,25 @@ public class AddItem extends AppCompatActivity {
                         }
                         Toast.makeText(AddItem.this,
                                 res, Toast.LENGTH_LONG).show();
-                        String finalRes = res;
 
                         item.setCategory(tags.get(0));
                         item.setDate_added(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
                         item.setLaundry_status(false);
                         item.setTags(tags);
                         item.setWorn_frequency(0);
+                        String finalRes = res;
 
                         Ref.putFile(imguri)
-                                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
-                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                        if (!task.isSuccessful()) {
-                                            throw task.getException();
-                                        }
-                                        return Ref.getDownloadUrl();
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        // Get a URL to the uploaded content
+//                                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                        Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
+                                        toItemDetail(view);
                                     }
                                 })
-                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
@@ -303,6 +293,10 @@ public class AddItem extends AppCompatActivity {
                                             toItemDetail(view);
                                         }
                                     }
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Handle unsuccessful uploads
+                                        // ...
+                                    } 
                                 });
                     }
                 })

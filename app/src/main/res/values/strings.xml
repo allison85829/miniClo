@@ -31,6 +31,7 @@
     <string name="logout">Logout</string>
     <string name="password_edt_text">Edit Password</string>
     <string name="new_password">Enter New Password</string>
+    <string name="suggest_donations">Suggest Donations</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

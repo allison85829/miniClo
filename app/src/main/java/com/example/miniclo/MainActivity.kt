@@ -1,9 +1,7 @@
 package com.example.miniclo
 
-import com.bumptech.glide.Glide
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -27,8 +25,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 //import kotlinx.android.synthetic.main.activity_main.tags
 
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 import android.os.Handler
 import android.widget.ImageView
@@ -45,7 +41,6 @@ import androidx.navigation.ui.setupWithNavController
 //import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.AppBarConfiguration
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 
 class MainActivity : AppCompatActivity() {
@@ -58,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
-    val user : FirebaseUser? = FirebaseAuth.getInstance().getCurrentUser()
 
     lateinit var tags : TextView
     lateinit var date_added : TextView
@@ -67,8 +61,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-
-        itemReference = Firebase.database.reference.child("/items")
 
         if(auth.currentUser == null){
             val intent = Intent(this, LoginActivity::class.java)
@@ -105,7 +97,6 @@ class MainActivity : AppCompatActivity() {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 val item: Item? = dataSnapshot.child("-M67mYjnX315Q4abm4Xj").getValue<Item>()
