@@ -58,7 +58,7 @@ public class AddItem extends AppCompatActivity {
     ImageView img;
     StorageReference mStorageRef;
     public Uri imguri;
-    public Item item;
+    public Item item  = new Item();
     public String res;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int PERMISSION_CODE = 1000;
@@ -67,6 +67,7 @@ public class AddItem extends AppCompatActivity {
     FirebaseUser user;
     User user_obj;
     int total_item;
+    String item_key;
     String[] cat = new String[]  {"top", "bottom", "hat", "dress", "shoe", "accessory"};
 
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
@@ -84,6 +85,7 @@ public class AddItem extends AppCompatActivity {
         setContentView(R.layout.activity_add_item);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.i("USER ", user.getEmail());
         itemReference = mDatabase.getReference();
         userReference = mDatabase.getReference();
 
@@ -104,10 +106,10 @@ public class AddItem extends AppCompatActivity {
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user_obj = dataSnapshot.child(user.getUid()).getValue(User.class);
-                if (user_obj != null) {
-                    total_item = user_obj.getTotal_item();
-                }
+//                user_obj = dataSnapshot.child(user.getUid()).getValue(User.class);
+//                if (user_obj != null) {
+//                    total_item = user_obj.getTotal_item();
+//                }
             }
 
             @Override
@@ -138,9 +140,10 @@ public class AddItem extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
+                Log.i("ADD ITEM ", "upload btn clicked *****");
                 try {
                     FileUploader(view);
-                } catch (CameraAccessException e) {
+                } catch (CameraAccessException | IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -177,9 +180,6 @@ public class AddItem extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.i("ACT ", "Resumed");
-//        Resources res = getResources();
-//        Drawable gallery_icon = ResourcesCompat.getDrawable(res, R.drawable.image_gallery_100, null);
-//        img.setImageDrawable(gallery_icon);
     }
 
     @Override
@@ -187,7 +187,6 @@ public class AddItem extends AppCompatActivity {
         super.onStart();
 
         Log.i("ACT ", "Started");
-
 //        Resources res = getResources();
 //        Drawable gallery_icon = ResourcesCompat.getDrawable(res, R.drawable.image_gallery_100, null);
 //        img.setImageDrawable(gallery_icon);
@@ -209,18 +208,16 @@ public class AddItem extends AppCompatActivity {
             img.setImageURI(imguri);
         }
         if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
             img.setImageURI(imguri);
         }
 
         if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
-            TextView textView = (TextView)findViewById(R.id.item_detail);
-            ImageView res_img = (ImageView)findViewById(R.id.detail_img);
+//            TextView textView = (TextView)findViewById(R.id.item_detail);
+//            ImageView res_img = (ImageView)findViewById(R.id.detail_img);
             String detail = data.getStringExtra("message");
-            textView.setText(detail);
+//            textView.setText(detail);
             Log.i("---------- Msg", detail);
-            res_img.setImageURI(imguri);
+//            res_img.setImageURI(imguri);
         }
     }
 
@@ -231,7 +228,7 @@ public class AddItem extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void FileUploader(View view) throws CameraAccessException {
+    private void FileUploader(View view) throws CameraAccessException, IOException {
         // Uploading file to Storage
         String file_name = System.currentTimeMillis() + "." + getExtension(imguri);
         StorageReference Ref = mStorageRef.child(file_name);
@@ -278,6 +275,7 @@ public class AddItem extends AppCompatActivity {
                                 .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                     @Override
                                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        Log.i("TASK ", "Continue task");
                                         if (!task.isSuccessful()) {
                                             throw task.getException();
                                         }
@@ -288,10 +286,9 @@ public class AddItem extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
+                                            Log.i("TASK ", "before push to firebase");
                                             Uri download = task.getResult();
-                                            item.setImage(download.toString());
-                                            itemReference = mDatabase.getReference().child("/items");
-                                            itemReference.push().setValue(item);
+                                            UploadItem(download, item);
                                             Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
                                             toItemDetail(view);
                                         }
@@ -314,12 +311,12 @@ public class AddItem extends AppCompatActivity {
 
         // add user id to item object
         item.setUser(user.getUid());
-        String item_key = itemReference.push().getKey();
+        item_key = itemReference.push().getKey();
         itemReference.child(item_key).setValue(item);
 
         // update the total item as new item added
-        total_item += 1;
-        userReference.child(user.getUid()).child("total_item").setValue(total_item);
+//        total_item += 1;
+//        userReference.child(user.getUid()).child("total_item").setValue(total_item);
 
         // add new item id to user's list of items
 //        userReference.child(user.getUid()).child("item_list");
@@ -360,13 +357,12 @@ public class AddItem extends AppCompatActivity {
     }
 
     public void toItemDetail(View view) {
-        Intent intent = new Intent(this, ItemDetail.class);
-        intent.putExtra("message", res);
+        Intent intent = new Intent(AddItem.this, ItemDetail.class);
+//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.putExtra("item_key", item_key);
         intent.putExtra("imguri", imguri.toString());
         Resources res = getResources();
 
-//        Drawable gallery_icon = ResourcesCompat.getDrawable(res, R.drawable.image_gallery_100, null);
-//        img.setImageDrawable(gallery_icon);
         startActivityForResult(intent, REQUEST_TO_DETAIL);
     }
 

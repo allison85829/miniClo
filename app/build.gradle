@@ -72,8 +72,13 @@ android {
         // Navigation and other stuff
         implementation 'com.google.android.material:material:1.0.0'
         implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-        implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0-rc02'
-        implementation 'androidx.navigation:navigation-ui-ktx:2.0.0-rc02'
+
+//        implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0-rc02'
+//        implementation 'androidx.navigation:navigation-fragment-ktx:1.2.0-rc02'
+        implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'
+
+//        implementation 'androidx.navigation:navigation-ui-ktx:2.0.0-rc02'
+        implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
 
         // Search bar
         implementation 'com.github.mancj:MaterialSearchBar:0.7.1'

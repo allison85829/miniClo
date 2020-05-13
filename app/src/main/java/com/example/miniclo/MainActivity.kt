@@ -99,26 +99,25 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val item: Item? = dataSnapshot.child("-M67mYjnX315Q4abm4Xj").getValue<Item>()
-                if (item != null) {
-                    val img : ImageView = findViewById<ImageView>(R.id.item_img)
-                    tags = findViewById(R.id.tags_text)
-                    var tg = ""
-                    for (t in item.tags) {
-                        tg += ", " + t
-                    }
-                    tags.setText("Tags: " + tg)
-
-                    date_added = findViewById(R.id.date_added_text)
-                    date_added.setText(item.date_added)
-
-                    worn_frequency = findViewById(R.id.worn_frequency)
-                    worn_frequency.setText(item.worn_frequency.toString())
-                    Glide.with(this@MainActivity)
-                        .load(item.image)
-                        .into(img)
-                }
+//                val item: Item? = dataSnapshot.child("-M67mYjnX315Q4abm4Xj").getValue<Item>()
+//                if (item != null) {
+//                    val img : ImageView = findViewById<ImageView>(R.id.item_img)
+//                    tags = findViewById(R.id.tags_text)
+//                    var tg = ""
+//                    for (t in item.tags) {
+//                        tg += ", " + t
+//                    }
+//                    tags.text = "Tags: " + tg
+//
+//                    date_added = findViewById(R.id.date_added_text)
+//                    date_added.text = item.date_added
+//
+//                    worn_frequency = findViewById(R.id.worn_frequency)
+//                    worn_frequency.text = item.worn_frequency.toString()
+//                    Glide.with(this@MainActivity)
+//                        .load(item.image)
+//                        .into(img)
+//                }
             }
         }
 

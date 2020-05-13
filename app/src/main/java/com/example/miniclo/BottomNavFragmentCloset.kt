@@ -1,49 +1,34 @@
 package com.example.miniclo
 
 
-import android.app.AlertDialog
-import android.content.DialogInterface
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_closet.*
-
-import android.widget.AdapterView
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.mancj.materialsearchbar.MaterialSearchBar
-
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import android.widget.EditText
-import androidx.constraintlayout.solver.widgets.Snapshot
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
-
 //import kotlinx.android.synthetic.main.activity_main.category
 //import kotlinx.android.synthetic.main.activity_main.date_added
 //import kotlinx.android.synthetic.main.activity_main.tags
 
-import java.io.File
-
-import android.os.Handler
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_closet.*
 
 /**
  * A simple [Fragment] subclass.
@@ -57,6 +42,16 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
     private lateinit var itemListener: ValueEventListener
 
     private lateinit var storage: FirebaseStorage
+    val REQUEST_TO_DETAIL = 3
+
+    lateinit var category : TextView
+    lateinit var date_added : TextView
+    lateinit var tags : TextView
+    lateinit var laundry_status : TextView
+    lateinit var worn_frequency : TextView
+    lateinit var image_view : ImageView
+    lateinit var item_card : CardView
+    var item_key = "-M6kY-zQC4wNFAr-5ljK"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -73,6 +68,15 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        initialize all views
+        if (view != null) {
+            tags = getView()!!.findViewById(R.id.tags_text)
+            date_added = getView()!!.findViewById(R.id.date_added_text)
+            worn_frequency = getView()!!.findViewById(R.id.worn_frequency)
+            laundry_status = getView()!!.findViewById(R.id.laundry_status)
+            image_view = getView()!!.findViewById<ImageView>(R.id.item_img)
+            item_card = getView()!!.findViewById<CardView>(R.id.item_card)
+        }
 
         // Set up back button
         /*toolbar_closet.setNavigationIcon(R.drawable.ic_home_black_24dp) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
@@ -173,29 +177,48 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val item: Item? = dataSnapshot.child("1").getValue<Item>()
+                item_key = "-M6kY-zQC4wNFAr-5ljK"
+                val item: Item? = dataSnapshot.child(item_key).getValue<Item>()
 //                category.text = item?.category
-//                date_added.text = item?.date_added
+                date_added.text = item?.date_added
 //                var t = ""
 //                for (tag in item?.tags!!) {
 //                    t += tag + ", "
 //                }
 //                tags.text = t
-//                laundry_status.text = item?.laundry_status.toString()
-//                worn_frequency.text = item?.worn_frequency.toString()
+                tags.text = item?.category
+                laundry_status.text = item?.laundry_status.toString()
+                worn_frequency.text = item?.worn_frequency.toString()
+                Glide.with(this@BottomNavFragmentCloset)
+                        .load(item!!.image)
+                        .into(image_view)
             }
         }
 
         itemReference = Firebase.database.reference.child("/items")
         itemReference.addValueEventListener(itemListener)
         this.itemListener = itemListener
-        val tags_lst = listOf<String>("Red", "White", "Short-sleeve")
-        val new_item : Item = Item("Dress", "04-21-2020", "img3.jpg", false, 10, tags_lst)
-        itemReference.child("3").setValue(new_item)
+
+        item_card.setOnClickListener {
+            val intent = Intent(activity, ItemDetail::class.java)
+            intent.putExtra("item_key", item_key)
+            val res = resources
+            startActivityForResult(intent, REQUEST_TO_DETAIL)
+        }
 
         add_item_button.setOnClickListener{
             val intent = Intent(activity, AddItem::class.java)
             startActivity(intent)
+        }
+
+
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
+
         }
     }
 

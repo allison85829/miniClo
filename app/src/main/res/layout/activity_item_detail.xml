@@ -6,30 +6,80 @@
     android:layout_height="match_parent"
     tools:context=".ItemDetail">
 
-    <ImageView
-        android:id="@+id/detail_img"
-        android:layout_width="364dp"
-        android:layout_height="383dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="82dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginRight="31dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_card"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:clickable="true"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="86dp">
 
-    <TextView
-        android:id="@+id/item_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="68dp"
-        android:text="Item Detail"
-        android:textColor="#3F51B5"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detail_img" />
+        <ImageView
+            android:id="@+id/detail_item_img"
+            android:layout_width="326dp"
+            android:layout_height="248dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            tools:src="@android:drawable/ic_menu_gallery" />
+
+        <TextView
+            android:id="@+id/detail_laundry_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="300dp"
+            android:layout_marginRight="30dp"
+            android:text="Laundry Status"
+            android:textColor="#3F51B5" />
+
+        <TextView
+            android:id="@+id/detail_tags_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="350dp"
+            android:layout_marginRight="30dp"
+            android:text="Tags"
+            android:textColor="#3F51B5" />
+
+        <TextView
+            android:id="@+id/detail_worn_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="400dp"
+            android:layout_marginRight="30dp"
+            android:text="Worn  Frequency"
+            android:textColor="#3F51B5" />
+
+        <TextView
+            android:id="@+id/detail_date_added_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="450dp"
+            android:layout_marginRight="30dp"
+            android:text="Date Added"
+            android:textColor="#3F51B5" />
+
+        <Button
+            android:id="@+id/add_laundry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="500dp"
+            android:layout_marginRight="30dp"
+            android:text="Add To Laundry" />
+
+        <Button
+            android:id="@+id/remove_laundry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="200dp"
+            android:layout_marginTop="500dp"
+            android:layout_marginRight="30dp"
+            android:text="Remove Laundry" />
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

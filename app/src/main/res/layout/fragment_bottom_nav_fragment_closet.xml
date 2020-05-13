@@ -68,50 +68,68 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.275" />
 
-        <ImageView
-            android:id="@+id/item_img"
-            android:layout_width="326dp"
-            android:layout_height="248dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            tools:src="@android:drawable/ic_menu_gallery" />
-
-        <TextView
-            android:id="@+id/tags_text"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="30dp"
-            android:text="Tags"
-            android:textColor="#3F51B5" />
+            android:layout_height="383dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true">
 
-        <TextView
-            android:id="@+id/worn_frequency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="30dp"
-            android:text="Worn  Frequency"
-            android:textColor="#3F51B5" />
+            <ImageView
+                android:id="@+id/item_img"
+                android:layout_width="326dp"
+                android:layout_height="248dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="5dp"
+                android:clickable="true"
+                tools:src="@android:drawable/ic_menu_gallery" />
 
-        <TextView
-            android:id="@+id/date_added_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="30dp"
-            android:text="Date Added"
-            android:textColor="#3F51B5" />
+            <TextView
+                android:id="@+id/laundry_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="260dp"
+                android:layout_marginRight="30dp"
+                android:text="Laundry Status"
+                android:textColor="#3F51B5" />
+
+            <TextView
+                android:id="@+id/tags_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="290dp"
+                android:layout_marginRight="30dp"
+                android:text="Tags"
+                android:textColor="#3F51B5" />
+
+            <TextView
+                android:id="@+id/worn_frequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="320dp"
+                android:layout_marginRight="30dp"
+                android:text="Worn  Frequency"
+                android:textColor="#3F51B5" />
+
+            <TextView
+                android:id="@+id/date_added_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="350dp"
+                android:layout_marginRight="30dp"
+                android:text="Date Added"
+                android:textColor="#3F51B5" />
+        </androidx.cardview.widget.CardView>
 
         <Button
             android:id="@+id/add_item_button"
             android:layout_width="match_parent"
             android:layout_height="59dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="20dp"
             android:text="Add Item" />
 
 
