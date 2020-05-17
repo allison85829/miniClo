@@ -1,9 +1,11 @@
 package com.example.miniclo
 
+import android.os.Parcelable
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import java.util.HashMap
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @IgnoreExtraProperties
 data class Item(
     var category: String = "",
@@ -14,7 +16,7 @@ data class Item(
     var tags: List<String> = listOf<String>(),
     var user: String = "",
     var incr: Boolean = false
-) {
+) : Parcelable {
     @Exclude
     fun toMap(): Map<String, Any?> {
         return mapOf(

@@ -78,6 +78,81 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
             item_card = getView()!!.findViewById<CardView>(R.id.item_card)
         }
 
+        setUpToolbar()
+        setUpSearchbar()
+    }
+
+    public override fun onStart() {
+        super.onStart()
+
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                item_key = "-M6kY-zQC4wNFAr-5ljK"
+                val item: Item? = dataSnapshot.child(item_key).getValue<Item>()
+//                category.text = item?.category
+                date_added.text = item?.date_added
+//                var t = ""
+//                for (tag in item?.tags!!) {
+//                    t += tag + ", "
+//                }
+//                tags.text = t
+                tags.text = item?.category
+                laundry_status.text = item?.laundry_status.toString()
+                worn_frequency.text = item?.worn_frequency.toString()
+                Glide.with(this@BottomNavFragmentCloset)
+                        .load(item!!.image)
+                        .into(image_view)
+            }
+        }
+
+        itemReference = Firebase.database.reference.child("/items")
+        itemReference.addValueEventListener(itemListener)
+        this.itemListener = itemListener
+
+        item_card.setOnClickListener {
+            val intent = Intent(activity, ItemDetail::class.java)
+            intent.putExtra("item_key", item_key)
+            val res = resources
+            startActivityForResult(intent, REQUEST_TO_DETAIL)
+        }
+
+        add_item_button.setOnClickListener{
+            val intent = Intent(activity, AddItem::class.java)
+            startActivity(intent)
+        }
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
+
+        }
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        itemReference.removeEventListener(this.itemListener)
+    }
+
+    /*
+    fun addItem(view: View) {
+        val intent = Intent(activity, AddItem::class.java)
+        startActivity(intent)
+    }
+    */
+    /*
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.closet_menu_options, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+     */
+
+    fun setUpToolbar() {
         // Set up back button
         /*toolbar_closet.setNavigationIcon(R.drawable.ic_home_black_24dp) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
         toolbar_closet.setNavigationOnClickListener {
@@ -136,7 +211,9 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                 }
             }
         }
+    }
 
+    fun setUpSearchbar() {
         //REFERENCE MATERIALSEARCHBAR AND LISTVIEW
         //val lv = android.R.layout.mListView as ListView
 //        val lv = mListView
@@ -176,78 +253,4 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
 
         //end
     }
-
-    public override fun onStart() {
-        super.onStart()
-
-        val itemListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                item_key = "-M6kY-zQC4wNFAr-5ljK"
-                val item: Item? = dataSnapshot.child(item_key).getValue<Item>()
-//                category.text = item?.category
-//                date_added.text = item?.date_added
-//                tags.text = item?.category
-//                laundry_status.text = item?.laundry_status.toString()
-//                worn_frequency.text = item?.worn_frequency.toString()
-                Glide.with(this@BottomNavFragmentCloset)
-                        .load(item!!.image).override(312,352)
-                        .into(image_view)
-            }
-        }
-
-        itemReference = Firebase.database.reference.child("/items")
-        itemReference.addValueEventListener(itemListener)
-        this.itemListener = itemListener
-
-        item_card.setOnClickListener {
-            val intent = Intent(activity, ItemDetail::class.java)
-            intent.putExtra("item_key", item_key)
-            val res = resources
-            startActivityForResult(intent, REQUEST_TO_DETAIL)
-        }
-
-        image_view.setOnClickListener {
-            val intent = Intent(activity, ItemDetail::class.java)
-            intent.putExtra("item_key", item_key)
-            val res = resources
-            startActivityForResult(intent, REQUEST_TO_DETAIL)
-        }
-
-        add_item_button.setOnClickListener{
-            val intent = Intent(activity, AddItem::class.java)
-            startActivity(intent)
-        }
-
-
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
-
-        }
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        itemReference.removeEventListener(this.itemListener)
-    }
-
-    /*
-    fun addItem(view: View) {
-        val intent = Intent(activity, AddItem::class.java)
-        startActivity(intent)
-    }
-    */
-    /*
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.closet_menu_options, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-     */
 }
