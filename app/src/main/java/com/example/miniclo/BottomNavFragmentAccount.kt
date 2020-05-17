@@ -8,12 +8,17 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import android.content.Intent
+import android.widget.TextView
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_account.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
+    lateinit var user_name : TextView
+    lateinit var user_email : TextView
+    var user : FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -24,6 +29,7 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar_account)
 
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_bottom_nav_fragment_account, container, false)
     }
@@ -31,6 +37,8 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        user_email = getView()!!.findViewById(R.id.user_email)
+        user_email.setText(user?.email)
         logout_btn.setOnClickListener{
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(activity, LoginActivity::class.java)

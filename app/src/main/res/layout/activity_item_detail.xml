@@ -1,69 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
     tools:context=".ItemDetail">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_card"
         android:layout_width="match_parent"
         android:layout_height="600dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="45dp"
         android:clickable="true"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="86dp">
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:cardMaxElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
 
         <ImageView
             android:id="@+id/detail_item_img"
             android:layout_width="326dp"
             android:layout_height="248dp"
             android:layout_marginLeft="40dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="60dp"
             android:clickable="true"
             tools:src="@android:drawable/ic_menu_gallery" />
 
+        <!--        Tags-->
         <TextView
-            android:id="@+id/detail_laundry_status"
+            android:id="@+id/detail_tags_label"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="300dp"
-            android:layout_marginRight="30dp"
-            android:text="Laundry Status"
-            android:textColor="#3F51B5" />
-
-        <TextView
-            android:id="@+id/detail_tags_text"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="350dp"
             android:layout_marginRight="30dp"
-            android:text="Tags"
-            android:textColor="#3F51B5" />
+            android:text="Tags:"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/detail_worn_frequency"
-            android:layout_width="match_parent"
+            android:id="@+id/detail_tag_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="350dp"
+            android:layout_marginEnd="30dp"
+            android:background="#E0E0E0"
+            android:text="Tag 1"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail_tag_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="180dp"
+            android:layout_marginTop="350dp"
+            android:layout_marginRight="30dp"
+            android:background="#E0E0E0"
+            android:text="Tag 2"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail_tag_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="290dp"
+            android:layout_marginTop="350dp"
+            android:layout_marginEnd="30dp"
+            android:background="#E0E0E0"
+            android:text="Tag 3"
+            android:textColor="#3F51B5"
+            android:textStyle="bold" />
+
+
+        <!--        Date Added -->
+        <TextView
+            android:id="@+id/detail_date_added_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="130dp"
+            android:layout_marginTop="400dp"
+            android:layout_marginRight="30dp"
+            android:text="date added"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail_date_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="400dp"
             android:layout_marginRight="30dp"
-            android:text="Worn  Frequency"
-            android:textColor="#3F51B5" />
+            android:text="Date Added:"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
+
+        <!--        Worn Frequency-->
         <TextView
-            android:id="@+id/detail_date_added_text"
-            android:layout_width="match_parent"
+            android:id="@+id/times_worn_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="450dp"
             android:layout_marginRight="30dp"
-            android:text="Date Added"
-            android:textColor="#3F51B5" />
+            android:lineSpacingExtra="16sp"
+            android:text="Times Worn: "
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/detail_worn_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="130dp"
+            android:layout_marginTop="450dp"
+            android:layout_marginRight="30dp"
+            android:text="Worn Freq"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!--        Laundry Status -->
+        <TextView
+            android:id="@+id/detail_laundry_status"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="320dp"
+            android:layout_marginTop="450dp"
+            android:layout_marginRight="30dp"
+            android:text="Laundry Stat"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/laundry_stat_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="230dp"
+            android:layout_marginTop="450dp"
+            android:layout_marginRight="30dp"
+            android:text="In Laundry: "
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!--        Buttons -->
         <Button
             android:id="@+id/add_laundry"
             android:layout_width="wrap_content"
@@ -81,5 +180,6 @@
             android:layout_marginTop="500dp"
             android:layout_marginRight="30dp"
             android:text="Remove Laundry" />
+
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

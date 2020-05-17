@@ -44,11 +44,11 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
     private lateinit var storage: FirebaseStorage
     val REQUEST_TO_DETAIL = 3
 
-    lateinit var category : TextView
-    lateinit var date_added : TextView
-    lateinit var tags : TextView
-    lateinit var laundry_status : TextView
-    lateinit var worn_frequency : TextView
+//    lateinit var category : TextView
+//    lateinit var date_added : TextView
+//    lateinit var tags : TextView
+//    lateinit var laundry_status : TextView
+//    lateinit var worn_frequency : TextView
     lateinit var image_view : ImageView
     lateinit var item_card : CardView
     var item_key = "-M6kY-zQC4wNFAr-5ljK"
@@ -70,10 +70,10 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         super.onViewCreated(view, savedInstanceState)
 //        initialize all views
         if (view != null) {
-            tags = getView()!!.findViewById(R.id.tags_text)
-            date_added = getView()!!.findViewById(R.id.date_added_text)
-            worn_frequency = getView()!!.findViewById(R.id.worn_frequency)
-            laundry_status = getView()!!.findViewById(R.id.laundry_status)
+//            tags = getView()!!.findViewById(R.id.tags_text)
+//            date_added = getView()!!.findViewById(R.id.date_added_text)
+//            worn_frequency = getView()!!.findViewById(R.id.worn_frequency)
+//            laundry_status = getView()!!.findViewById(R.id.laundry_status)
             image_view = getView()!!.findViewById<ImageView>(R.id.item_img)
             item_card = getView()!!.findViewById<CardView>(R.id.item_card)
         }
@@ -118,6 +118,15 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                     Toast.makeText(
                         activity,
                         "Clicked Options Menu",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true
+                }
+                R.id.action_del -> {
+                    // do something
+                    Toast.makeText(
+                        activity,
+                        "Clicked Delete",
                         Toast.LENGTH_SHORT
                     ).show()
                     true
@@ -180,17 +189,12 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                 item_key = "-M6kY-zQC4wNFAr-5ljK"
                 val item: Item? = dataSnapshot.child(item_key).getValue<Item>()
 //                category.text = item?.category
-                date_added.text = item?.date_added
-//                var t = ""
-//                for (tag in item?.tags!!) {
-//                    t += tag + ", "
-//                }
-//                tags.text = t
-                tags.text = item?.category
-                laundry_status.text = item?.laundry_status.toString()
-                worn_frequency.text = item?.worn_frequency.toString()
+//                date_added.text = item?.date_added
+//                tags.text = item?.category
+//                laundry_status.text = item?.laundry_status.toString()
+//                worn_frequency.text = item?.worn_frequency.toString()
                 Glide.with(this@BottomNavFragmentCloset)
-                        .load(item!!.image)
+                        .load(item!!.image).override(312,352)
                         .into(image_view)
             }
         }
@@ -200,6 +204,13 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         this.itemListener = itemListener
 
         item_card.setOnClickListener {
+            val intent = Intent(activity, ItemDetail::class.java)
+            intent.putExtra("item_key", item_key)
+            val res = resources
+            startActivityForResult(intent, REQUEST_TO_DETAIL)
+        }
+
+        image_view.setOnClickListener {
             val intent = Intent(activity, ItemDetail::class.java)
             intent.putExtra("item_key", item_key)
             val res = resources
