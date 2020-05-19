@@ -15,7 +15,8 @@ data class Item(
     var worn_frequency: Int = 0,
     var tags: List<String> = listOf<String>(),
     var user: String = "",
-    var incr: Boolean = false
+    var incr: Boolean = false,
+    var key: String = ""
 ) : Parcelable {
     @Exclude
     fun toMap(): Map<String, Any?> {
