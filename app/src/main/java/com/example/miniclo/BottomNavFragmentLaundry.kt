@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
@@ -51,6 +50,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                     val item: Item? = it.getValue<Item>()
                     Log.i("Item", item.toString())
                     if (item != null) {
+                        item.key = it.key!!
                         itemsArr.add(item)
                     }
                 }
