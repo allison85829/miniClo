@@ -94,15 +94,15 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                 item_key = "-M6kY-zQC4wNFAr-5ljK"
                 val item: Item? = dataSnapshot.child(item_key).getValue<Item>()
 //                category.text = item?.category
-                date_added.text = item?.date_added
+//                date_added.text = item?.date_added
 //                var t = ""
 //                for (tag in item?.tags!!) {
 //                    t += tag + ", "
 //                }
 //                tags.text = t
-                tags.text = item?.category
-                laundry_status.text = item?.laundry_status.toString()
-                worn_frequency.text = item?.worn_frequency.toString()
+//                tags.text = item?.category
+//                laundry_status.text = item?.laundry_status.toString()
+//                worn_frequency.text = item?.worn_frequency.toString()
                 Glide.with(this@BottomNavFragmentCloset)
                         .load(item!!.image)
                         .into(image_view)
@@ -114,6 +114,13 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         this.itemListener = itemListener
 
         item_card.setOnClickListener {
+            val intent = Intent(activity, ItemDetail::class.java)
+            intent.putExtra("item_key", item_key)
+            val res = resources
+            startActivityForResult(intent, REQUEST_TO_DETAIL)
+        }
+
+        image_view.setOnClickListener {
             val intent = Intent(activity, ItemDetail::class.java)
             intent.putExtra("item_key", item_key)
             val res = resources

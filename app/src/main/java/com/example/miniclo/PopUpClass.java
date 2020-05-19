@@ -9,8 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.cardview.widget.CardView;
 
 public class PopUpClass {
+
     //PopupWindow display method
 
     public void showPopupWindow(final View view) {
@@ -35,7 +37,7 @@ public class PopUpClass {
         //Initialize the elements of our window, install the handler
 
         TextView test2 = popupView.findViewById(R.id.titleText);
-        test2.setText("Text title");
+        test2.setText("Title");
 
         Button buttonEdit = popupView.findViewById(R.id.messageButton);
         buttonEdit.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +53,7 @@ public class PopUpClass {
 
 
         //Handler for clicking on the inactive zone of the window
+
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

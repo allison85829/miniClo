@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,12 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,6 +43,7 @@ public class ItemDetail extends AppCompatActivity {
     TextView tag1, tag2, tag3;
     ImageView detail_img;
     Button add_laundry, rm_laundry;
+    FloatingActionButton del;
     DatabaseReference itemReference;
     ValueEventListener itemListener;
     FirebaseStorage storage;
@@ -69,6 +73,7 @@ public class ItemDetail extends AppCompatActivity {
         detail_img = (ImageView)findViewById(R.id.detail_item_img);
         add_laundry = (Button)findViewById(R.id.add_laundry);
         rm_laundry = (Button)findViewById(R.id.remove_laundry);
+        del = (FloatingActionButton) findViewById(R.id.del_btn);
 
         itemListener = new ValueEventListener() {
             @Override
@@ -77,7 +82,6 @@ public class ItemDetail extends AppCompatActivity {
 
                 if (item != null) {
                     Log.i("ITEM", item.toString());
-//                    tags.setText(item.getCategory().toString());
                     List<String> tags_lst = item.getTags();
                     tag1.setText(tags_lst.get(0));
                     tag2.setText(tags_lst.get(1));
@@ -134,6 +138,14 @@ public class ItemDetail extends AppCompatActivity {
             }
         });
 
+        del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopUpClass popUpClass = new PopUpClass();
+                popUpClass.showPopupWindow(v);
+            }
+        });
+
         mStorageRef = FirebaseStorage.getInstance().getReference("/images");
     }
 
@@ -161,21 +173,6 @@ public class ItemDetail extends AppCompatActivity {
                         "Action Delete Clicked",
                         Toast.LENGTH_SHORT
                 ).show();
-//                MenuItem delBtn = (MenuItem)findViewById(R.id.action_delete);
-//                delBtn.setOnMenuItemClickListener( new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        PopUpClass popUpClass = new PopUpClass();
-//                        popUpClass.showPopupWindow();
-//                    }
-//                });
-
-//                delBtn.setOnMenuItemClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                    }
-//                });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -192,5 +189,14 @@ public class ItemDetail extends AppCompatActivity {
                     Log.i("OUT", "Failure");
             }
         });
+    }
+
+    public void displayPopupWindow() {
+        PopupWindow popup = new PopupWindow(this);
+        View layout = getLayoutInflater().inflate(R.layout.popup_window, null);
+        popup.setContentView(layout);
+        popup.setOutsideTouchable(true);
+        popup.setFocusable(true);
+        popup.showAtLocation(layout, Gravity.CENTER, 0, 0);
     }
 }

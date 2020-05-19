@@ -181,5 +181,14 @@
             android:layout_marginRight="30dp"
             android:text="Remove Laundry" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/del_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginLeft="340dp"
+            app:backgroundTint="#DA8E76"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
