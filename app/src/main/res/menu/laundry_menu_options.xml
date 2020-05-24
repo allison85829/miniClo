@@ -4,16 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".BottomNavFragmentLaundry">
-    <!-- Filter Option -->
-    <item
-        android:id="@+id/action_filter"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/action_filter"
-        app:showAsAction="ifRoom"/>
 
     <!-- Overflow Options -->
     <item
-        android:id="@+id/action_options"
-        android:title="@string/action_options"
+        android:id="@+id/sort_by_option"
+        android:title="@string/sort_by_title"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/filter_by_option"
+        android:title="@string/filter_by_title"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/show_all_option"
+        android:title="@string/show_all_title"
         app:showAsAction="never"/>
 </menu>

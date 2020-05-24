@@ -12,9 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="-28dp"
-        tools:layout_editor_absoluteY="29dp">
+        android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
@@ -42,105 +40,40 @@
             </androidx.appcompat.widget.Toolbar>
 
             <com.mancj.materialsearchbar.MaterialSearchBar
-                android:id="@+id/searchBar"
+                app:mt_speechMode="true"
+                app:mt_hint="Custom hint"
+                app:theme="@style/AppTheme.PopupOverlay"
+                app:mt_maxSuggestionsCount="5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:mt_hint="Custom hint"
-                app:mt_maxSuggestionsCount="5"
-                app:mt_speechMode="true"
-                app:theme="@style/AppTheme.PopupOverlay" />
+                android:id="@+id/searchBarCloset" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/welcome_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Welcome to MiniClo"
-            android:textColor="#03A9F4"
-            android:textSize="30sp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.567"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.275" />
-
-        <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/item_card"
-            android:layout_width="320dp"
-            android:layout_height="360dp"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center_horizontal"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            card_view:cardElevation="2dp"
-            card_view:cardCornerRadius="5dp"
-            android:clickable="true">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/card_edge" />
-
-            <ImageView
-                android:id="@+id/item_img"
-                android:layout_width="312dp"
-                android:layout_height="352dp"
-                android:layout_gravity="center"
-                android:background="@color/cardview_light_background"
-                android:clickable="true"
-                tools:src="@android:drawable/ic_menu_gallery" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/laundry_status"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="30dp"-->
-<!--                android:layout_marginTop="260dp"-->
-<!--                android:layout_marginRight="30dp"-->
-<!--                android:text="Laundry Status"-->
-<!--                android:textColor="#3F51B5" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/tags_text"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="30dp"-->
-<!--                android:layout_marginTop="290dp"-->
-<!--                android:layout_marginRight="30dp"-->
-<!--                android:text="Tags"-->
-<!--                android:textColor="#3F51B5" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/worn_frequency"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="30dp"-->
-<!--                android:layout_marginTop="320dp"-->
-<!--                android:layout_marginRight="30dp"-->
-<!--                android:text="Worn  Frequency"-->
-<!--                android:textColor="#3F51B5" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/date_added_text"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginLeft="30dp"-->
-<!--                android:layout_marginTop="350dp"-->
-<!--                android:layout_marginRight="30dp"-->
-<!--                android:text="Date Added"-->
-<!--                android:textColor="#3F51B5" />-->
-        </androidx.cardview.widget.CardView>
-
-        <Button
-            android:id="@+id/add_item_button"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="59dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="parent"
-            android:text="Add Item" />
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/closetRecView"
+                android:layout_width="match_parent"
+                android:layout_height="571dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_item_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="16dp"
+                android:layout_marginBottom="24dp"
+                android:src="@android:drawable/ic_input_add"
+                android:background="#FFFFFF"
+                app:backgroundTint="@color/colorAccent"/>
+        </FrameLayout>
 
 
         <!--    <ListView-->

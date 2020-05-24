@@ -3,7 +3,6 @@ package com.example.miniclo
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,13 +12,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_laundry.*
 
 
@@ -31,6 +26,10 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
     private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
     private var itemsReference : DatabaseReference = mDatabase.reference.child("/items");
     private lateinit var itemsListener: ValueEventListener
+    private var user : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private var SORT_BY_WORN_FREQ_ASC = "sort by worn frequency asc"
+    private var SORT_BY_WORN_FREQ_DESC = "sort by worn frequency desc"
+    private var SORT_BY_DATE_ADDED = "sort by date added"
 
     override fun onStart() {
         super.onStart()
@@ -50,15 +49,17 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                     val item: Item? = it.getValue<Item>()
                     Log.i("Item", item.toString())
                     if (item != null) {
-                        item.key = it.key!!
-                        itemsArr.add(item)
+                        if (item.laundry_status) {
+                            item.key = it.key!!
+                            itemsArr.add(item)
+                        }
                     }
                 }
                 setupRecyclerView(itemsArr)
             }
         }
 
-        itemsReference.addListenerForSingleValueEvent(itemListener)
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
         this.itemsListener = itemListener
     }
 
@@ -83,6 +84,9 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        clearLaundryBtn.setOnClickListener{
+            Toast.makeText(context, "Clear Laundry is clicked", Toast.LENGTH_SHORT).show()
+        }
         setupToolbar()
         //setupRecyclerView()
         //setupSearchbar()
@@ -92,43 +96,72 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
         toolbar_laundry.inflateMenu(R.menu.laundry_menu_options)
         toolbar_laundry.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.action_filter -> {
-                    // do something
-                    // build alert dialog
-                    val dialogBuilder = AlertDialog.Builder(activity)
-
-                    // set message of alert dialog
-                    dialogBuilder.setMessage("Testing Alert Dialog")
-                        // if the dialog is cancelable
-                        .setCancelable(false)
-                        // positive button text and action
-                        .setPositiveButton("Proceed", DialogInterface.OnClickListener {
-                                dialog, id -> dialog.cancel()
-                        })
-                        // negative button text and action
-                        .setNegativeButton("Cancel", DialogInterface.OnClickListener {
-                                dialog, id -> dialog.cancel()
-                        })
-
-                    // create dialog box
-                    val alert = dialogBuilder.create()
-                    // set title for alert dialog box
-                    alert.setTitle("AlertDialogExample")
-                    // show alert dialog
-                    alert.show()
+                R.id.sort_by_option -> {
+                    val sort_options = arrayOf("Date Added", "Most Frequently Worn", "Least Frequently Worn")
+                    val builder = AlertDialog.Builder(context)
+                    with(builder)
+                    {
+                        setTitle("Sort By")
+                        setItems(sort_options) { dialog, which ->
+                            when (which) {
+                                0 -> sortRecView(SORT_BY_DATE_ADDED)
+                                1 -> sortRecView(SORT_BY_WORN_FREQ_DESC)
+                                2 -> sortRecView(SORT_BY_WORN_FREQ_ASC)
+                            }
+                            dialog.dismiss()
+                            Toast.makeText(
+                                context,
+                                "Sorted by " + sort_options[which],
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        show()
+                    }
                     true
                 }
-                R.id.action_options -> {
-                    // do something
-                    Toast.makeText(
-                        activity,
-                        "Clicked Options Menu",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                R.id.filter_by_option -> {
+                    val filter_options = arrayOf("Top", "Bottom", "Shoe", "Dress", "Hat", "Accessory", "Other")
+                    val builder = AlertDialog.Builder(context)
+                    with(builder)
+                    {
+                        setTitle("Filter By")
+                        setItems(filter_options) { dialog, which ->
+                            filterRecView(filter_options[which])
+                            dialog.dismiss()
+                            Toast.makeText(
+                                context,
+                                "Filtered by " + filter_options[which],
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        show()
+                    }
                     true
                 }
                 else -> {
-                    super.onOptionsItemSelected(it)
+                    val itemListener = object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                            TODO("not implemented")
+                        }
+
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val items = dataSnapshot!!.children
+                            val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                            items.forEach {
+                                val item: Item? = it.getValue<Item>()
+                                if (item != null) {
+                                    if (item.laundry_status) {
+                                        item.key = it.key!!
+                                        itemsArr.add(item)
+                                    }
+                                }
+                            }
+                            setupRecyclerView(itemsArr)
+                        }
+                    }
+
+                    itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+                    true
                 }
             }
         }
@@ -197,6 +230,62 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
         toolbar_laundry.setNavigationOnClickListener {
             // do something when click navigation
         }
+    }
+
+    fun sortRecView(sort_prop : String) {
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented")
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = dataSnapshot!!.children
+                val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                items.forEach {
+                    val item: Item? = it.getValue<Item>()
+                    Log.i("Item", item.toString())
+                    if (item != null) {
+                        if (item.laundry_status) {
+                            item.key = it.key!!
+                            itemsArr.add(item)
+                        }
+                    }
+                }
+                when (sort_prop) {
+                    SORT_BY_DATE_ADDED -> itemsArr.sortBy{ it.date_added }
+                    SORT_BY_WORN_FREQ_ASC -> itemsArr.sortBy{ it.worn_frequency }
+                    SORT_BY_WORN_FREQ_DESC -> itemsArr.sortByDescending { it.worn_frequency }
+                }
+
+                setupRecyclerView(itemsArr)
+            }
+        }
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+        itemsListener = itemsListener
+    }
+
+    fun filterRecView(filter_prop : String) {
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented")
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = dataSnapshot!!.children
+                val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                items.forEach {
+                    val item: Item? = it.getValue<Item>()
+                    if (item != null) {
+                        if (item.laundry_status && item.category == filter_prop) {
+                            item.key = it.key!!
+                            itemsArr.add(item)
+                        }
+                    }
+                }
+                setupRecyclerView(itemsArr)
+            }
+        }
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
     }
 
     /*
