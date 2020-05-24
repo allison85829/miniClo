@@ -27,7 +27,6 @@ class ItemDetailPage : AppCompatActivity() {
         item_date_added_value.text = item.date_added
         Picasso.get().load(item.image).into(item_img)
 
-
         setUpLaundryBtn(item.key)
         setUpActionBar()
     }

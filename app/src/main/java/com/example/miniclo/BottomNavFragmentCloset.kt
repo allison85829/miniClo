@@ -113,11 +113,6 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
             }
         }
     }
-       
-    public override fun onStop() {
-        super.onStop()
-        itemReference.removeEventListener(this.itemListener)
-    }
 
     fun setupToolbar() { 
         toolbar_closet.inflateMenu(R.menu.closet_menu_options)

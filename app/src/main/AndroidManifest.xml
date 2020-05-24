@@ -47,8 +47,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ItemDetailPage" />
-
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="label" />
