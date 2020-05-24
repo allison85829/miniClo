@@ -13,8 +13,9 @@
     <string name="stats_toolbar_title">My Closet Stats</string>
     <string name="account_toolbar_title">My Account</string>
 
-    <string name="action_filter">Filter</string>
-    <string name="action_options">Options</string>
+    <string name="filter_by_title">Filter By</string>
+    <string name="sort_by_title">Sort By</string>
+    <string name="show_all_title">Show All</string>
 
     <string name="info_text">Sample app showcasing use of NavigationUI library to hook two material components BottomNavigationView and NavigationView with nav graph.\n\nFind the source code on github at https://github.com/sagar-viradiya/NavigationUIDemo</string>
     <string name="nav_header_1">Jetpack</string>

@@ -4,14 +4,56 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
 import kotlinx.android.synthetic.main.fragment_stats_to_donate.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class FragmentStatsToDonate : Fragment() {
+
+    private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var itemsReference : DatabaseReference = mDatabase.reference.child("/items");
+    private lateinit var itemsListener: ValueEventListener
+    private var user : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+    override fun onStart() {
+        super.onStart()
+
+        val itemsListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented")
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = dataSnapshot!!.children
+                val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                items.forEach {
+                    val item: Item? = it.getValue<Item>()
+                    if (item != null) {
+                        item.key = it.key!!
+                        itemsArr.add(item)
+                    }
+                }
+                itemsArr.sortBy{ it.worn_frequency }
+                setupRecyclerView(itemsArr.take(10) as ArrayList<Item>)
+            }
+        }
+
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemsListener)
+        this.itemsListener = itemsListener
+    }
+
+    override fun onStop() {
+        super.onStop()
+        itemsReference.removeEventListener(itemsListener)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,5 +87,15 @@ class FragmentStatsToDonate : Fragment() {
             getFragmentManager()?.popBackStackImmediate()
         }
 
+        donateItemsBtn.setOnClickListener{
+            Toast.makeText(context, "Donate Items is clicked", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun setupRecyclerView(itemArr: ArrayList<Item>) {
+        donateRecView.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = ItemAdapter(itemArr)
+        }
     }
 }

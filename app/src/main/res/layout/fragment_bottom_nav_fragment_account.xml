@@ -97,21 +97,19 @@
         android:id="@+id/update_pass_btn"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
         android:text="@string/update_pass"
         app:layout_constraintBottom_toTopOf="@+id/logout_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/logout_btn"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="80dp"
         android:text="@string/logout"
         app:layout_constraintBottom_toBottomOf="parent" />
 

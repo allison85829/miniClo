@@ -27,7 +27,7 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 <TextView
-                    android:id="@+id/toolbar_closet_title"
+                    android:id="@+id/toolbar_laundry_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
@@ -46,18 +46,34 @@
                 app:mt_maxSuggestionsCount="5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/searchBar" />
+                android:id="@+id/searchBarLaundry" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/laundryRecView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/laundryRecView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <Button
+                android:id="@+id/clearLaundryBtn"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="80dp"
+                android:text="Clear Laundry" />
+
+        </RelativeLayout>
 
         <!--
         <ListView

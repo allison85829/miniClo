@@ -5,53 +5,71 @@ package com.example.miniclo
 //import kotlinx.android.synthetic.main.activity_main.date_added
 //import kotlinx.android.synthetic.main.activity_main.tags
 
-import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.GridLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_closet.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
-    //        create an instance of Firebase Database
     private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
-    //        reference to the root node
-    private lateinit var itemReference : DatabaseReference
+    private var itemsReference : DatabaseReference = mDatabase.reference.child("/items");
+    private lateinit var itemsListener: ValueEventListener
+    private var user : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private var SORT_BY_WORN_FREQ_ASC = "sort by worn frequency asc"
+    private var SORT_BY_WORN_FREQ_DESC = "sort by worn frequency desc"
+    private var SORT_BY_DATE_ADDED = "sort by date added"
 
-    private lateinit var itemListener: ValueEventListener
+    override fun onStart() {
+        super.onStart()
 
-    private lateinit var storage: FirebaseStorage
-    val REQUEST_TO_DETAIL = 3
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented")
+            }
 
-//    lateinit var category : TextView
-//    lateinit var date_added : TextView
-//    lateinit var tags : TextView
-//    lateinit var laundry_status : TextView
-//    lateinit var worn_frequency : TextView
-    lateinit var image_view : ImageView
-    lateinit var item_card : CardView
-    var item_key = "-M6kY-zQC4wNFAr-5ljK"
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = dataSnapshot!!.children
+                val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                //val items  = dataSnapshot.getValue<Item>();
+//                category.text = item?.category
+                items.forEach {
+                    //Log.i("Item", it.toString())
+                    val item: Item? = it.getValue<Item>()
+                    Log.i("Item", item.toString())
+                    if (item != null) {
+                        Log.i("id in item", item.user)
+                        item.key = it.key!!
+                        itemsArr.add(item)
+                    }
+                }
+                setupRecyclerView(itemsArr)
+            }
+        }
+
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+        //itemsReference.addListenerForSingleValueEvent(itemListener)
+        this.itemsListener = itemListener
+    }
+
+    override fun onStop() {
+        super.onStop()
+        itemsReference.removeEventListener(this.itemsListener)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -68,97 +86,35 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        initialize all views
-        if (view != null) {
-//            tags = getView()!!.findViewById(R.id.tags_text)
-//            date_added = getView()!!.findViewById(R.id.date_added_text)
-//            worn_frequency = getView()!!.findViewById(R.id.worn_frequency)
-//            laundry_status = getView()!!.findViewById(R.id.laundry_status)
-            image_view = getView()!!.findViewById<ImageView>(R.id.item_img)
-            item_card = getView()!!.findViewById<CardView>(R.id.item_card)
-        }
 
-        setUpToolbar()
-        setUpSearchbar()
-    }
-
-    public override fun onStart() {
-        super.onStart()
-
-        val itemListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                item_key = "-M6kY-zQC4wNFAr-5ljK"
-                val item: Item? = dataSnapshot.child(item_key).getValue<Item>()
-//                category.text = item?.category
-//                date_added.text = item?.date_added
-//                var t = ""
-//                for (tag in item?.tags!!) {
-//                    t += tag + ", "
-//                }
-//                tags.text = t
-//                tags.text = item?.category
-//                laundry_status.text = item?.laundry_status.toString()
-//                worn_frequency.text = item?.worn_frequency.toString()
-                Glide.with(this@BottomNavFragmentCloset)
-                        .load(item!!.image)
-                        .into(image_view)
+        setupToolbar()
+        add_item_btn.setOnClickListener{
+            //val intent = Intent(activity, AddItem::class.java)
+            //startActivity(intent)
+            val items = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
+            val builder = AlertDialog.Builder(context)
+            with(builder)
+            {
+                setTitle("Upload Closet Item")
+                setItems(items) { dialog, which ->
+                    when (which) {
+                        0 -> {
+                            val intent = Intent(activity, AddItem::class.java)
+                            startActivity(intent)
+                        }
+                        1 -> print(which)
+                        2 -> print(which)
+                    }
+                    dialog.dismiss()
+                    Toast.makeText(context, items[which] + " is clicked", Toast.LENGTH_SHORT).show()
+                }
+                show()
             }
         }
-
-        itemReference = Firebase.database.reference.child("/items")
-        itemReference.addValueEventListener(itemListener)
-        this.itemListener = itemListener
-
-        item_card.setOnClickListener {
-            val intent = Intent(activity, ItemDetail::class.java)
-            intent.putExtra("item_key", item_key)
-            val res = resources
-            startActivityForResult(intent, REQUEST_TO_DETAIL)
-        }
-
-        add_item_button.setOnClickListener{
-            val intent = Intent(activity, AddItem::class.java)
-            startActivity(intent)
-        }
+        //setupSearchbar()
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
-
-        }
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        itemReference.removeEventListener(this.itemListener)
-    }
-
-    /*
-    fun addItem(view: View) {
-        val intent = Intent(activity, AddItem::class.java)
-        startActivity(intent)
-    }
-    */
-    /*
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.closet_menu_options, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-     */
-
-    fun setUpToolbar() {
-        // Set up back button
-        /*toolbar_closet.setNavigationIcon(R.drawable.ic_home_black_24dp) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
-        toolbar_closet.setNavigationOnClickListener {
-            // do something when click navigation
-        }*/
-
+    fun setupToolbar() {
         toolbar_closet.inflateMenu(R.menu.closet_menu_options)
         toolbar_closet.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -188,35 +144,96 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                     alert.show()
                     true
                 }
-                R.id.action_options -> {
-                    // do something
-                    Toast.makeText(
-                        activity,
-                        "Clicked Options Menu",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                R.id.sort_by_option -> {
+                    val sort_options = arrayOf("Date Added", "Most Frequently Worn", "Least Frequently Worn")
+                    val builder = AlertDialog.Builder(context)
+                    with(builder)
+                    {
+                        setTitle("Sort By")
+                        setItems(sort_options) { dialog, which ->
+                            when (which) {
+                                0 -> sortRecView(SORT_BY_DATE_ADDED)
+                                1 -> sortRecView(SORT_BY_WORN_FREQ_DESC)
+                                2 -> sortRecView(SORT_BY_WORN_FREQ_ASC)
+                            }
+                            dialog.dismiss()
+                            Toast.makeText(
+                                context,
+                                "Sorted by " + sort_options[which],
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        show()
+                    }
                     true
                 }
-                R.id.action_del -> {
-                    // do something
-                    Toast.makeText(
-                        activity,
-                        "Clicked Delete",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                R.id.filter_by_option -> {
+                    val filter_options = arrayOf("Top", "Bottom", "Shoe", "Dress", "Hat", "Accessory", "Other")
+                    val builder = AlertDialog.Builder(context)
+                    with(builder)
+                    {
+                        setTitle("Filter By")
+                        setItems(filter_options) { dialog, which ->
+                            filterRecView(filter_options[which])
+                            dialog.dismiss()
+                            Toast.makeText(
+                                context,
+                                "Filtered by " + filter_options[which],
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        show()
+                    }
                     true
                 }
                 else -> {
-                    super.onOptionsItemSelected(it)
+                    val itemListener = object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                            TODO("not implemented")
+                        }
+
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val items = dataSnapshot!!.children
+                            val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                            items.forEach {
+                                val item: Item? = it.getValue<Item>()
+                                if (item != null) {
+                                    item.key = it.key!!
+                                    itemsArr.add(item)
+                                }
+                            }
+                            setupRecyclerView(itemsArr)
+                        }
+                    }
+
+                    itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+                    true
                 }
             }
         }
     }
 
-    fun setUpSearchbar() {
+    fun setupRecyclerView(itemArr: ArrayList<Item>) {
+        /*
+        val itemArr = arrayListOf<ItemTest>()
+
+        for (i in 0..100) {
+            itemArr.add(ItemTest("Test $i", "https://via.placeholder.com/350/CCCCCC/ff0000"))
+        }
+         */
+
+        //var layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
+        closetRecView.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = ItemAdapter(itemArr)
+        }
+    }
+
+    /*
+    fun setupSearchbar() {
         //REFERENCE MATERIALSEARCHBAR AND LISTVIEW
         //val lv = android.R.layout.mListView as ListView
-//        val lv = mListView
+        val lv = mListView
         //val searchBar = android.R.layout.searchBar as MaterialSearchBar
         val searchBar = searchBar
         searchBar.setHint("Search..")
@@ -226,7 +243,7 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
 
         //ADAPTER
         val adapter = ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, galaxies)
-//        lv?.setAdapter(adapter)
+        lv?.setAdapter(adapter)
 
         //SEARCHBAR TEXT CHANGE LISTENER
         searchBar?.addTextChangeListener(object : TextWatcher {
@@ -245,12 +262,79 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         })
 
         //LISTVIEW ITEM CLICKED
-//        lv?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-//            override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-//                Toast.makeText(activity, "Hi"/*adapter.getItem(i)!!.toString()*/, Toast.LENGTH_SHORT).show()
-//            }
-//        })
-
-        //end
+        lv?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+            override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+                Toast.makeText(activity, "Hi"/*adapter.getItem(i)!!.toString()*/, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
+    */
+
+    fun setupBackButton() {
+        // Set up back button
+        toolbar_closet.setNavigationIcon(R.drawable.ic_home_black_24dp) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
+        toolbar_closet.setNavigationOnClickListener {
+            // do something when click navigation
+        }
+    }
+
+    fun sortRecView(sort_prop : String) {
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented")
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = dataSnapshot!!.children
+                val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                items.forEach {
+                    val item: Item? = it.getValue<Item>()
+                    Log.i("Item", item.toString())
+                    if (item != null) {
+                        item.key = it.key!!
+                        itemsArr.add(item)
+                    }
+                }
+                when (sort_prop) {
+                    SORT_BY_DATE_ADDED -> itemsArr.sortBy{ it.date_added }
+                    SORT_BY_WORN_FREQ_ASC -> itemsArr.sortBy{ it.worn_frequency }
+                    SORT_BY_WORN_FREQ_DESC -> itemsArr.sortByDescending { it.worn_frequency }
+                }
+
+                setupRecyclerView(itemsArr)
+            }
+        }
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+    }
+
+    fun filterRecView(filter_prop : String) {
+        val itemListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented")
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = dataSnapshot!!.children
+                val itemsArr : ArrayList<Item> = ArrayList<Item>()
+                items.forEach {
+                    val item: Item? = it.getValue<Item>()
+                    if (item != null) {
+                        if (item.category == filter_prop) {
+                            item.key = it.key!!
+                            itemsArr.add(item)
+                        }
+                    }
+                }
+                setupRecyclerView(itemsArr)
+            }
+        }
+        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+    }
+
+    /*
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.closet_menu_options, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+     */
 }
