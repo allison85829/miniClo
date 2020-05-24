@@ -33,3 +33,4 @@ class ItemAdapter(private val items: ArrayList<Item>) : RecyclerView.Adapter<Ite
         val title: TextView = itemView.findViewById(R.id.rec_item_title)
     }
 }
+

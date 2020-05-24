@@ -28,7 +28,8 @@ data class Item(
             "worn_frequency" to worn_frequency,
             "tags" to tags,
             "user" to user,
-            "incr" to incr
+            "incr" to incr,
+            "key" to key
         )
     }
 }

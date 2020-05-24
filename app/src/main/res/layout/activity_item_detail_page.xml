@@ -11,12 +11,14 @@
         android:layout_width="0dp"
         android:layout_height="400dp"
         android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="10dp"
         android:scaleType="fitCenter"
         android:src="@drawable/jetpack_chart"
-        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/item_card"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_card"
@@ -147,6 +149,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/item_tags_title" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/del_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginLeft="340dp"
+            android:layout_marginTop="10dp"
+            app:backgroundTint="#DA8E76"
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            />
+
     </androidx.cardview.widget.CardView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

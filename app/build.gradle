@@ -100,3 +100,7 @@ android {
         implementation 'com.squareup.picasso:picasso:2.71828'
     }
 }
+
+dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:+'
+}

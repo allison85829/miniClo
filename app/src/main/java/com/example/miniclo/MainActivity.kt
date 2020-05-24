@@ -32,6 +32,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 
 import androidx.core.os.postDelayed
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -83,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up navigation menu
         navigationView.setupWithNavController(navController)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

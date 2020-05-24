@@ -82,50 +82,9 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.i("USER ", user.getEmail());
-        itemReference = mDatabase.getReference();
-        userReference = mDatabase.getReference();
-
-        // ****** ITEM LISTENER *************
-         itemListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // ****** USER LISTENER *************
-        userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                user_obj = dataSnapshot.child(user.getUid()).getValue(User.class);
-//                if (user_obj != null) {
-//                    total_item = user_obj.getTotal_item();
-//                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        // ****** add user and item listener
-        userReference.child("/users").push().addValueEventListener(userListener);
-        itemReference.child("/items").push().addValueEventListener(itemListener);
-
-        mStorageRef = FirebaseStorage.getInstance().getReference("/images");
-
-        select = (Button)findViewById(R.id.select_img_btn);
-        upload = (Button)findViewById(R.id.upload_btn);
-        take_photo = (Button)findViewById(R.id.take_photo_btn);
-        img = (ImageView)findViewById(R.id.imageView);
+        // set up views like buttons, image views and text
+        setUpViews();
+        setUpDBRefAndListeners();
 
         select.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,6 +156,50 @@ public class AddItem extends AppCompatActivity {
         startActivityForResult(intent, 2);
     }
 
+    private void setUpViews() {
+        select = (Button)findViewById(R.id.select_img_btn);
+        upload = (Button)findViewById(R.id.upload_btn);
+        take_photo = (Button)findViewById(R.id.take_photo_btn);
+        img = (ImageView)findViewById(R.id.imageView);
+    }
+
+    private void setUpDBRefAndListeners() {
+        // ****** ITEM LISTENER *************
+        itemListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        // ****** USER LISTENER *************
+        userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        // ****** add user and item listener
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        itemReference = mDatabase.getReference();
+        userReference = mDatabase.getReference();
+        userReference.child("/users").push().addValueEventListener(userListener);
+        itemReference.child("/items").push().addValueEventListener(itemListener);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("/images");
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -256,11 +259,10 @@ public class AddItem extends AppCompatActivity {
                             String text = label.getText();
                             String entityId = label.getEntityId();
                             float confidence = label.getConfidence();
-
                             res += text + ", " + entityId + ", " + confidence + "\n";
                         }
-                        Toast.makeText(AddItem.this,
-                                res, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(AddItem.this,
+//                                res, Toast.LENGTH_LONG).show();
 
                         item.setCategory(tags.get(0));
                         item.setDate_added(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
@@ -288,7 +290,7 @@ public class AddItem extends AppCompatActivity {
                                             Uri download = task.getResult();
                                             UploadItem(download, item);
                                             Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
-                                            toItemDetail(view);
+                                            toItemDetail(view, item);
                                         }
                                     }
                                 });
@@ -312,12 +314,6 @@ public class AddItem extends AppCompatActivity {
         item_key = itemReference.push().getKey();
         itemReference.child(item_key).setValue(item);
 
-        // update the total item as new item added
-//        total_item += 1;
-//        userReference.child(user.getUid()).child("total_item").setValue(total_item);
-
-        // add new item id to user's list of items
-//        userReference.child(user.getUid()).child("item_list");
         String list_entry_key = userReference.child(user.getUid()).child("item_list").push().getKey();
         userReference.child(user.getUid()).child("item_list").child(list_entry_key).setValue(item_key);
     }
@@ -354,11 +350,11 @@ public class AddItem extends AppCompatActivity {
         }
     }
 
-    public void toItemDetail(View view) {
-        Intent intent = new Intent(AddItem.this, ItemDetail.class);
-//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+    public void toItemDetail(View view, Item item) {
+        Intent intent = new Intent(AddItem.this, ItemDetailPage.class);
         intent.putExtra("item_key", item_key);
         intent.putExtra("imguri", imguri.toString());
+        intent.putExtra("item_obj", item);
         Resources res = getResources();
 
         startActivityForResult(intent, REQUEST_TO_DETAIL);

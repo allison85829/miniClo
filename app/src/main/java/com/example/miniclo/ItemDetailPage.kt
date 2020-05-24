@@ -1,5 +1,6 @@
 package com.example.miniclo
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -7,27 +8,30 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_item_detail_page.*
-import java.util.*
 
 class ItemDetailPage : AppCompatActivity() {
 
     var itemReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/items")
-
+    lateinit var item : Item
+//    lateinit var del_btn : Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_detail_page)
 
-        val item : Item = intent.getParcelableExtra("item_obj")
+        item = intent.getParcelableExtra("item_obj")
         item_tags_value.text = item.tags.toString()
         item_date_added_value.text = item.date_added
         Picasso.get().load(item.image).into(item_img)
 
+
         setUpLaundryBtn(item.key)
         setUpActionBar()
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -52,11 +56,8 @@ class ItemDetailPage : AppCompatActivity() {
                 true
             }
             R.id.action_delete -> {
-                Toast.makeText(
-                    this,
-                    "Action Delete Clicked",
-                    Toast.LENGTH_SHORT
-                ).show()
+                val popUpClass = PopUpClass()
+                popUpClass.showPopupWindow(findViewById(R.id.item_card), this.item.key)
                 true
             }
             else -> super.onOptionsItemSelected(item)

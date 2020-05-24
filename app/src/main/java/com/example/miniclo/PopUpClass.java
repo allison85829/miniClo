@@ -1,5 +1,7 @@
 package com.example.miniclo;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -9,13 +11,25 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.cardview.widget.CardView;
+import android.content.Intent;
 
-public class PopUpClass {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.navigation.Navigation;
+
+public class PopUpClass extends AppCompatActivity {
 
     //PopupWindow display method
+    private Button buttonAction;
+    private TextView message;
 
-    public void showPopupWindow(final View view) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.popup_window);
+    }
+
+    public void showPopupWindow(final View view, String item_key) {
 
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
@@ -36,21 +50,26 @@ public class PopUpClass {
 
         //Initialize the elements of our window, install the handler
 
-        TextView test2 = popupView.findViewById(R.id.titleText);
-        test2.setText("Title");
-
-        Button buttonEdit = popupView.findViewById(R.id.messageButton);
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
+        message = popupView.findViewById(R.id.titleText);
+        message.setText("Do you want to delete the item?");
+        buttonAction = popupView.findViewById(R.id.action_btn);
+        buttonAction.setText("Delete");
+        buttonAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //As an example, display the message
-                Toast.makeText(view.getContext(), "Wow, popup action button", Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), item_key, Toast.LENGTH_SHORT).show();
+                // Delete Item here - Need key
+                // close the window
+                popupWindow.dismiss();
 
+                // go back to laundry or closet page
+                Navigation.createNavigateOnClickListener(R.id.layout_laundry, null);
+//                Navigation.findNavController(view).navigate(R.id.layout_laundry);
+//                Intent intent = new Intent(PopUpClass.this, BottomNavFragmentLaundry.class);
+//                startActivity(intent);
             }
         });
-
-
 
         //Handler for clicking on the inactive zone of the window
 
@@ -63,5 +82,13 @@ public class PopUpClass {
                 return true;
             }
         });
+    }
+
+    public void setButtonText(String btn_txt) {
+        buttonAction.setText(btn_txt);
+    }
+
+    public void setMessageText(String msg_txt) {
+        message.setText(msg_txt);
     }
 }
