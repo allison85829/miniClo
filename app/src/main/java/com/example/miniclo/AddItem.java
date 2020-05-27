@@ -69,12 +69,8 @@ public class AddItem extends AppCompatActivity {
     String[] cat = new String[]  {"top", "bottom", "hat", "dress", "shoe", "accessory"};
 
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference itemReference;
-    private ValueEventListener itemListener;
-
-    private DatabaseReference userReference;
-    private ValueEventListener userListener;
-
+    private DatabaseReference itemReference, userReference;
+    private ValueEventListener itemListener, userListener;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -314,8 +310,7 @@ public class AddItem extends AppCompatActivity {
         item_key = itemReference.push().getKey();
         itemReference.child(item_key).setValue(item);
 
-        String list_entry_key = userReference.child(user.getUid()).child("item_list").push().getKey();
-        userReference.child(user.getUid()).child("item_list").child(list_entry_key).setValue(item_key);
+        userReference.child(user.getUid() + "/item_list/" + item_key).setValue(true);
     }
 
     private void openCamera() {

@@ -15,7 +15,6 @@ data class Item(
     var worn_frequency: Int = 0,
     var tags: List<String> = listOf<String>(),
     var user: String = "",
-    var incr: Boolean = false,
     var key: String = ""
 ) : Parcelable {
     @Exclude
@@ -28,7 +27,6 @@ data class Item(
             "worn_frequency" to worn_frequency,
             "tags" to tags,
             "user" to user,
-            "incr" to incr,
             "key" to key
         )
     }

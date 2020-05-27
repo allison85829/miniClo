@@ -117,7 +117,10 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
             }
         }
         user = FirebaseAuth.getInstance().currentUser!!
-        userReference = Firebase.database.reference.child("/users").child(user.uid.toString()).child("item_list")
+        userReference = Firebase.database.reference
+            .child("/users/${user.uid.toString()}/item_list")
+//            .child(user.uid.toString())
+//            .child("item_list")
         userReference.addValueEventListener(userListener)
         attachAdapter()
 

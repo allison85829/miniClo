@@ -1,23 +1,32 @@
 package com.example.miniclo
 
 import android.app.Activity.RESULT_OK
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_account.*
 import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 
 /**
  * A simple [Fragment] subclass.
@@ -28,18 +37,79 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
     private var mParam2: String? = null
+    private lateinit var user_name_input : TextInputEditText
+    private lateinit var user_email_input : TextInputEditText
     private lateinit var img_view: ImageView
     private lateinit var progressbar_pic: ProgressBar
+    private lateinit var save_btn : Button
     private lateinit var imageUri: Uri
+    private lateinit var imageBitmap : Bitmap
+    var baos : OutputStream = ByteArrayOutputStream()
     private val REQUEST_IMAGE_CAPTURE = 100
+
+    private var usersReference : DatabaseReference =
+        FirebaseDatabase.getInstance().reference.child("/users");
+    private lateinit var usersListener: ValueEventListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progressbar_pic = getView()!!.findViewById(R.id.progressbar_pic)
         img_view = getView()!!.findViewById(R.id.profile_pic)
-        img_view.setOnClickListener({
+        user_name_input =  getView()!!.findViewById(R.id.user_name_text)
+        user_email_input =  getView()!!.findViewById(R.id.user_email_text)
+        img_view.setOnClickListener{
             takePictureIntent()
-        })
+        }
+        save_btn = getView()!!.findViewById(R.id.save_change_btn)
+        save_btn.setOnClickListener{
+            if (this::imageBitmap.isInitialized) {
+                uploadImageAndSaveUri(imageBitmap)
+            }
+            updateUserInfo()
+            // go back to user account page
+            val acc_info : BottomNavFragmentAccount = BottomNavFragmentAccount()
+            val transaction : FragmentTransaction = parentFragmentManager.beginTransaction()
+            transaction.replace(R.id.layout_edit_account, acc_info)
+            transaction.commit()
+        }
+    }
+
+    private fun updateUserInfo() {
+        val name = user_name_input.editableText.toString().trim()
+        val email = user_email_input.editableText.toString().trim()
+        Log.d("EMAIL", email)
+        Toast.makeText(
+            activity, name,
+            Toast.LENGTH_SHORT
+        ).show()
+        if (email != "") {
+            val user = FirebaseAuth.getInstance().currentUser
+            Log.d("USER ", user!!.email)
+            user!!.updateEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d(TAG, "User email address updated.")
+                    }
+                }
+        }
+        if (name != "") {
+            usersListener = object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    Toast.makeText(
+                        activity, "Name updated",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            usersReference.addValueEventListener(usersListener)
+            usersReference
+                .child("/${FirebaseAuth.getInstance().currentUser?.uid}/user_name")
+                .setValue(name)
+        }
     }
 
     private fun takePictureIntent() {
@@ -54,8 +124,11 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            uploadImageAndSaveUri(imageBitmap)
+            imageBitmap = data?.extras?.get("data") as Bitmap
+            // set image view with the captured image
+            baos = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            img_view.setImageBitmap(imageBitmap)
         }
     }
 
@@ -64,7 +137,7 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
         val storageRef = FirebaseStorage.getInstance()
             .reference
             .child("profile_pics/${FirebaseAuth.getInstance().currentUser?.uid}")
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val image = baos.toByteArray()
 
         val upload = storageRef.putBytes(image)
@@ -73,17 +146,14 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
 
         upload.addOnCompleteListener { uploadTask ->
             progressbar_pic.visibility = View.INVISIBLE
-
             if (uploadTask.isSuccessful) {
                 storageRef.downloadUrl.addOnCompleteListener { urlTask ->
                     urlTask.result?.let {
-                        imageUri = it
-                        Toast.makeText(
-                            activity,
-                            imageUri.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        img_view.setImageBitmap(bitmap)
+//                        Toast.makeText(
+//                            activity,
+//                            "Uploaded",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
                     }
                 }
             } else {
