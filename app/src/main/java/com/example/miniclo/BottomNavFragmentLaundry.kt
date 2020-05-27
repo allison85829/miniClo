@@ -45,9 +45,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                 //val items  = dataSnapshot.getValue<Item>();
 //                category.text = item?.category
                 items.forEach {
-                    //Log.i("Item", it.toString())
                     val item: Item? = it.getValue<Item>()
-                    Log.i("Item", item.toString())
                     if (item != null) {
                         if (item.laundry_status) {
                             item.key = it.key!!
@@ -243,7 +241,6 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                 val itemsArr : ArrayList<Item> = ArrayList<Item>()
                 items.forEach {
                     val item: Item? = it.getValue<Item>()
-                    Log.i("Item", item.toString())
                     if (item != null) {
                         if (item.laundry_status) {
                             item.key = it.key!!

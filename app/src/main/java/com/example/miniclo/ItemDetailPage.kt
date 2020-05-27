@@ -1,14 +1,11 @@
 package com.example.miniclo
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_item_detail_page.*
@@ -23,9 +20,12 @@ class ItemDetailPage : AppCompatActivity() {
         setContentView(R.layout.activity_item_detail_page)
 
         item = intent.getParcelableExtra("item_obj")
-        item_tags_value.text = item.tags.toString()
+        //item_tags_value.text = item.tags.toString()
+        tag_1.text = item.category
+        tag_2.text = item.tags[1]
+        tag_3.text = item.tags[2]
         item_date_added_value.text = item.date_added
-        Picasso.get().load(item.image).into(item_img)
+        Picasso.get().load(item.image).into(uploadImgPreview)
 
         setUpLaundryBtn(item.key)
         setUpActionBar()
