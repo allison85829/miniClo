@@ -10,7 +10,6 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.example.miniclo.com.example.miniclo.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -182,13 +181,33 @@ class UploadItem : AppCompatActivity() {
 
         // add user id to item object
         item.user = user!!.getUid()
-        item_key = itemReference!!.push().getKey()
+        item_key = itemReference!!.push().key
         itemReference!!.child(item_key!!).setValue(item)
-        val list_entry_key: String =
-            userReference!!.child(user!!.getUid()).child("item_list").push().getKey()!!
 
-        userReference!!.child(user!!.getUid()).child("item_list").child(list_entry_key)
-            .setValue(item_key)
+        userReference!!.child(user!!.uid + "/item_list/" + item_key).setValue(true)
+
+        /*
+        val item_count_ref: DatabaseReference = userReference!!.child(user!!.getUid()).child("total_item")
+        item_count_ref.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val currentValue = mutableData.getValue(Int::class.java)
+                if (currentValue == null) {
+                    mutableData.value = 1
+                } else {
+                    mutableData.value = currentValue + 1
+                }
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                databaseError: DatabaseError?,
+                committed: Boolean,
+                dataSnapshot: DataSnapshot?
+            ) {
+                println("Transaction completed")
+            }
+        })
+         */
     }
 
     /*

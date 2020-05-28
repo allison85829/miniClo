@@ -30,6 +30,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
     private var SORT_BY_WORN_FREQ_ASC = "sort by worn frequency asc"
     private var SORT_BY_WORN_FREQ_DESC = "sort by worn frequency desc"
     private var SORT_BY_DATE_ADDED = "sort by date added"
+    private lateinit var laundry_items : ArrayList<Item>
 
     override fun onStart() {
         super.onStart()
@@ -53,6 +54,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                         }
                     }
                 }
+                laundry_items = itemsArr
                 setupRecyclerView(itemsArr)
             }
         }
@@ -83,7 +85,25 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         clearLaundryBtn.setOnClickListener{
-            Toast.makeText(context, "Clear Laundry is clicked", Toast.LENGTH_SHORT).show()
+            val dialogBuilder = AlertDialog.Builder(activity)
+            dialogBuilder.setMessage("Are you sure want to clear your laundry?")
+                .setCancelable(false)
+                .setPositiveButton("Clear", DialogInterface.OnClickListener {
+                        dialog, id ->
+                    run {
+                        dialog.cancel()
+                        clearLaundry()
+                        Toast.makeText(context, "Successfully cleared laundry", Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                        dialog, id -> dialog.cancel()
+                })
+
+            val alert = dialogBuilder.create()
+            alert.setTitle("Clear Laundry")
+            alert.show()
         }
         setupToolbar()
         //setupRecyclerView()
@@ -163,6 +183,37 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                 }
             }
         }
+    }
+
+    fun clearLaundry() {
+        for (item in laundry_items) {
+            itemsReference.child(item.key).child("laundry_status").setValue(false)
+        }
+        laundry_items = ArrayList<Item>()
+        setupRecyclerView(laundry_items)
+
+        /*
+        val item_count_ref: DatabaseReference = userReference!!.child(userUid).child("total_item")
+        item_count_ref.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val currentValue = mutableData.getValue(Int::class.java)
+                if (currentValue == null) {
+                    mutableData.value = 0
+                } else {
+                    mutableData.value = currentValue - items_to_donate.size
+                }
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                databaseError: DatabaseError?,
+                committed: Boolean,
+                dataSnapshot: DataSnapshot?
+            ) {
+                println("Transaction completed")
+            }
+        })
+         */
     }
 
     fun setupRecyclerView(itemArr: ArrayList<Item>) {
