@@ -98,9 +98,10 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val user = dataSnapshot!!.getValue<User>()
-                user_name.setText(user?.user_name)
-                user_email.setText(user?.email)
+                val user_obj = dataSnapshot!!.getValue<User>()
+                Log.i("USER ", user_obj?.user_name)
+                user_name.setText(user_obj?.user_name)
+                user_email.setText(user_obj?.email)
             }
         }
         usersReference.addValueEventListener(usersListener)
