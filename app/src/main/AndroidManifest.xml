@@ -21,14 +21,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ItemDetailPage"></activity>
+        <activity android:name=".UploadItem"></activity>
+        <activity android:name=".ItemDetailPage" />
         <activity
             android:name=".AddItem"
             android:label="@string/title_activity_add_item"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".UpdatePassword"></activity>
+        <activity android:name=".UpdatePassword" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity
             android:name=".LoginActivity"

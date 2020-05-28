@@ -1,6 +1,9 @@
 package com.example.miniclo
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +22,11 @@ import kotlinx.android.synthetic.main.fragment_stats_to_donate.*
 class FragmentStatsToDonate : Fragment() {
 
     private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
-    private var itemsReference : DatabaseReference = mDatabase.reference.child("/items");
+    private var itemsReference : DatabaseReference = mDatabase.reference.child("/items")
+    private var userReference : DatabaseReference = mDatabase.reference.child("/users")
     private lateinit var itemsListener: ValueEventListener
-    private var user : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private var userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private lateinit var items_to_donate : ArrayList<Item>
 
     override fun onStart() {
         super.onStart()
@@ -42,11 +47,12 @@ class FragmentStatsToDonate : Fragment() {
                     }
                 }
                 itemsArr.sortBy{ it.worn_frequency }
-                setupRecyclerView(itemsArr.take(10) as ArrayList<Item>)
+                items_to_donate = itemsArr.take(10).toList() as ArrayList<Item>
+                setupRecyclerView(items_to_donate)
             }
         }
 
-        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemsListener)
+        itemsReference.orderByChild("user").equalTo(userUid).addListenerForSingleValueEvent(itemsListener)
         this.itemsListener = itemsListener
     }
 
@@ -88,8 +94,56 @@ class FragmentStatsToDonate : Fragment() {
         }
 
         donateItemsBtn.setOnClickListener{
-            Toast.makeText(context, "Donate Items is clicked", Toast.LENGTH_SHORT).show()
+            val dialogBuilder = AlertDialog.Builder(activity)
+            dialogBuilder.setMessage("Are you sure want to donate these items? This will permanently remove 10 items from your closet.")
+                .setCancelable(false)
+                .setPositiveButton("Donate", DialogInterface.OnClickListener {
+                        dialog, id ->
+                        run {
+                            dialog.cancel()
+                            donateItems()
+                            Toast.makeText(context, "Successfully donated items", Toast.LENGTH_SHORT).show()
+                            getFragmentManager()?.popBackStackImmediate()
+                    }
+
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                        dialog, id -> dialog.cancel()
+                })
+
+            val alert = dialogBuilder.create()
+            alert.setTitle("Donate Items")
+            alert.show()
         }
+    }
+
+    fun donateItems() {
+        for (item in items_to_donate) {
+            itemsReference.child(item.key).setValue(null)
+            userReference.child(userUid).child("item_list").child(item.key).setValue(null)
+        }
+
+        /*
+        val item_count_ref: DatabaseReference = userReference!!.child(userUid).child("total_item")
+        item_count_ref.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val currentValue = mutableData.getValue(Int::class.java)
+                if (currentValue == null) {
+                    mutableData.value = 0
+                } else {
+                    mutableData.value = currentValue - items_to_donate.size
+                }
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(
+                databaseError: DatabaseError?,
+                committed: Boolean,
+                dataSnapshot: DataSnapshot?
+            ) {
+                println("Transaction completed")
+            }
+         */
     }
 
     fun setupRecyclerView(itemArr: ArrayList<Item>) {

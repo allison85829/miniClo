@@ -1,64 +1,49 @@
 package com.example.miniclo
 
-import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.widget.Toast
-import android.util.Log
-import android.view.View
-import android.widget.EditText
-import androidx.constraintlayout.solver.widgets.Snapshot
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
-import kotlinx.android.synthetic.main.activity_main.*
-
 //import kotlinx.android.synthetic.main.activity_main.category
 //import kotlinx.android.synthetic.main.activity_main.date_added
 //import kotlinx.android.synthetic.main.activity_main.tags
 
-import java.io.File
-
-import android.os.Handler
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.annotation.RequiresApi
-
-import androidx.core.os.postDelayed
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavController
+//import androidx.navigation.ui.setupActionBarWithNavController
+import android.Manifest
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-//import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.AppBarConfiguration
-import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     //        create an instance of Firebase Database
-    private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
+    //private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
     //        reference to the root node
-    private lateinit var itemReference : DatabaseReference
+   // private lateinit var itemReference : DatabaseReference
 
-    private lateinit var itemListener: ValueEventListener
+    //private lateinit var itemListener: ValueEventListener
 
-    private lateinit var storage: FirebaseStorage
+    //private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
 
-    lateinit var tags : TextView
-    lateinit var date_added : TextView
-    lateinit var worn_frequency : TextView
+    //lateinit var tags : TextView
+    //lateinit var date_added : TextView
+    //lateinit var worn_frequency : TextView
+
+    private val REQUEST_TO_DETAIL = 3
+    private val PERMISSION_CODE = 1000
+    private val IMAGE_CAPTURE_CODE = 1001
+    var imguri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             Navigation.findNavController(this, R.id.mainNavFragment), drawerLayout)
     }
 
+    /*
     public override fun onStart() {
         super.onStart()
 
@@ -114,9 +100,75 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         itemReference.removeEventListener(this.itemListener)
     }
+    */
 
-    fun addItem(view: View) {
-        val intent = Intent(this, AddItem::class.java)
-        startActivity(intent)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            imguri = data.data
+            //img.setImageURI(imguri)
+            val intent = Intent(this, UploadItem::class.java)
+            intent.putExtra("img_uri", imguri.toString())
+            startActivity(intent)
+        }
+        if (requestCode == IMAGE_CAPTURE_CODE && resultCode == Activity.RESULT_OK) {
+            //img.setImageURI(imguri)
+            val intent = Intent(this, UploadItem::class.java)
+            intent.putExtra("img_uri", imguri.toString())
+            startActivity(intent)
+        }
+        if (requestCode == REQUEST_TO_DETAIL && resultCode == Activity.RESULT_OK) {
+//            TextView textView = (TextView)findViewById(R.id.item_detail);
+//            ImageView res_img = (ImageView)findViewById(R.id.detail_img);
+            val detail = data!!.getStringExtra("message")
+            //            textView.setText(detail);
+            Log.i("---------- Msg", detail)
+            //            res_img.setImageURI(imguri);
+        }
+    }
+
+    fun clickSelectFile() {
+        val intent = Intent()
+        intent.type = "image/"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, 2)
+    }
+
+    fun clickTakePhoto() {
+        // if system OS is >= marshmallow, request runtime permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_DENIED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_DENIED
+            ) {
+                // permission to enabled, request it
+                val permission = arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                // show popup to request permissions
+                requestPermissions(permission, PERMISSION_CODE)
+            } else {
+                // permission already granted
+                openCamera()
+            }
+        } else {
+            // system OS < marshmallow
+            openCamera()
+        }
+    }
+
+    private fun openCamera() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
+        imguri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        // Camera intent
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imguri)
+        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
     }
 }

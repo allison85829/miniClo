@@ -8,8 +8,8 @@ package com.example.miniclo
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +33,10 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
     private var SORT_BY_WORN_FREQ_ASC = "sort by worn frequency asc"
     private var SORT_BY_WORN_FREQ_DESC = "sort by worn frequency desc"
     private var SORT_BY_DATE_ADDED = "sort by date added"
+    private val REQUEST_TO_DETAIL = 3
+    private val PERMISSION_CODE = 1000
+    private val IMAGE_CAPTURE_CODE = 1001
+    var imguri: Uri? = null
 
     override fun onStart() {
         super.onStart()
@@ -50,9 +54,9 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                 items.forEach {
                     //Log.i("Item", it.toString())
                     val item: Item? = it.getValue<Item>()
-                    Log.i("Item", item.toString())
+                    //Log.i("Item", item.toString())
                     if (item != null) {
-                        Log.i("id in item", item.user)
+                        //Log.i("id in item", item.user)
                         item.key = it.key!!
                         itemsArr.add(item)
                     }
@@ -90,8 +94,6 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         setupToolbar() 
         //setupSearchbar()
         add_item_btn.setOnClickListener{
-            //val intent = Intent(activity, AddItem::class.java)
-            //startActivity(intent)
             val items = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
             val builder = AlertDialog.Builder(context)
             with(builder)
@@ -99,15 +101,16 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                 setTitle("Upload Closet Item")
                 setItems(items) { dialog, which ->
                     when (which) {
-                        0 -> {
+                        0 -> { (activity as MainActivity).clickTakePhoto() }
+                        1 -> { (activity as MainActivity).clickSelectFile() }
+                        /*
+                        2 -> {
                             val intent = Intent(activity, AddItem::class.java)
                             startActivity(intent)
-                        }
-                        1 -> print(which)
-                        2 -> print(which)
+                        }*/
                     }
                     dialog.dismiss()
-                    Toast.makeText(context, items[which] + " is clicked", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, items[which] + " is clicked", Toast.LENGTH_SHORT).show()
                 }
                 show()
             }
@@ -222,7 +225,6 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         }
          */
 
-        //var layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
         closetRecView.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = ItemAdapter(itemArr)
@@ -289,7 +291,6 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                 val itemsArr : ArrayList<Item> = ArrayList<Item>()
                 items.forEach {
                     val item: Item? = it.getValue<Item>()
-                    Log.i("Item", item.toString())
                     if (item != null) {
                         item.key = it.key!!
                         itemsArr.add(item)
