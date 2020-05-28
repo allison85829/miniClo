@@ -52,55 +52,94 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <ImageView
-            android:id="@+id/profile_pic"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:src="@android:drawable/ic_menu_gallery"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
-        <ProgressBar
-            android:visibility="invisible"
-            android:id="@+id/progressbar_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/user_name_edit"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="180dp"
-            android:layout_marginTop="110dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginStart="30dp"
+                android:src="@android:drawable/ic_menu_gallery"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteX="30dp"
+                tools:ignore="MissingConstraints" />
 
-            <com.google.android.material.textfield.TextInputEditText
-
-                android:layout_width="match_parent"
+            <ProgressBar
+                android:id="@+id/progressbar_pic"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:hint="User name" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="88dp"
+                android:layout_marginLeft="70dp"
+                android:visibility="invisible"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="125dp" />
 
-        <TextView
-            android:id="@+id/user_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/email_email_com"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/imageView2"
-            app:layout_constraintTop_toTopOf="@+id/user_name_edit" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_name_edit"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="55dp"
+                app:layout_constraintStart_toEndOf="@+id/profile_pic"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/save_change_btn"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Save Changes"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/user_name_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="User name"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_email_edit"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toEndOf="@+id/profile_pic"
+                app:layout_constraintTop_toBottomOf="@+id/user_name_edit">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/user_email_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email@email.com"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <TextView-->
+<!--                android:id="@+id/user_email"-->
+<!--                android:layout_width="200dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginTop="75dp"-->
+<!--                android:text="@string/email_email_com"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/profile_pic"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/user_name_edit" />-->
+
+            <Button
+                android:id="@+id/save_change_btn"
+                android:layout_width="300dp"
+                android:layout_height="56dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="80dp"
+                android:text="Save Changes"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 
 <!--    <ImageView-->

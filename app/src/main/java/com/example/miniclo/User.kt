@@ -7,6 +7,7 @@ import com.google.firebase.database.Exclude
 data class User(
     var email: String = "",
     var uid: String = "",
+    var user_name: String = "",
     var item_list: List<String> = listOf<String>(),
     var total_item: Int = 0
 ) {
@@ -15,6 +16,7 @@ data class User(
         return mapOf(
             "email" to email,
             "uid" to uid,
+            "user_name" to user_name,
             "item_list" to item_list,
             "total_item" to total_item
         )
