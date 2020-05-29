@@ -4,6 +4,8 @@ package com.example.miniclo
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +17,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
+import com.mancj.materialsearchbar.MaterialSearchBar
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_laundry.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -71,10 +76,8 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        toolbar_laundry?.title = "My Closet"
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(toolbar_laundry)
-        toolbar_laundry?.title = "My Closet"
         setHasOptionsMenu(true)
 
         // Inflate the layout for this fragment
@@ -106,8 +109,6 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
             alert.show()
         }
         setupToolbar()
-        //setupRecyclerView()
-        //setupSearchbar()
     }
 
     fun setupToolbar() {
@@ -217,129 +218,83 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
     }
 
     fun setupRecyclerView(itemArr: ArrayList<Item>) {
-        /*
-        val itemArr = arrayListOf<ItemTest>()
-
-        for (i in 0..100) {
-            itemArr.add(ItemTest("Test $i", "https://via.placeholder.com/350/CCCCCC/ff0000"))
-        }
-         */
-
-        //var layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(context)
+        var itemAdapter = ItemAdapter(itemArr)
         laundryRecView.apply {
             layoutManager = GridLayoutManager(context, 2)
-            adapter = ItemAdapter(itemArr)
+            adapter = itemAdapter
         }
+        setupSearchBar(itemArr, itemAdapter)
     }
 
-    /*
-    fun setupSearchbar() {
-        //REFERENCE MATERIALSEARCHBAR AND LISTVIEW
-        //val lv = android.R.layout.mListView as ListView
-        val lv = mListView
-        //val searchBar = android.R.layout.searchBar as MaterialSearchBar
-        val searchBar = searchBar
-        searchBar.setHint("Search..")
-        searchBar.setSpeechMode(true)
-
-        var galaxies = arrayOf("Sombrero", "Cartwheel", "Pinwheel", "StarBust", "Whirlpool", "Ring Nebular", "Own Nebular", "Centaurus A", "Virgo Stellar Stream", "Canis Majos Overdensity", "Mayall's Object", "Leo", "Milky Way", "IC 1011", "Messier 81", "Andromeda", "Messier 87")
-
-        //ADAPTER
-        val adapter = ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, galaxies)
-        lv?.setAdapter(adapter)
-
-        //SEARCHBAR TEXT CHANGE LISTENER
-        searchBar?.addTextChangeListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-
-            }
+    fun setupSearchBar(itemArr: ArrayList<Item>, itemAdapter: ItemAdapter) {
+        searchBarLaundry.addTextChangeListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                //SEARCH FILTER
-                adapter.getFilter().filter(charSequence)
+                itemAdapter.getFilter().filter(charSequence)
             }
 
-            override fun afterTextChanged(editable: Editable) {
-
-            }
+            override fun afterTextChanged(editable: Editable) {}
         })
 
-        //LISTVIEW ITEM CLICKED
-        lv?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-            override fun onItemClick(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                Toast.makeText(activity, "Hi"/*adapter.getItem(i)!!.toString()*/, Toast.LENGTH_SHORT).show()
+        searchBarLaundry.setOnSearchActionListener( object : MaterialSearchBar.OnSearchActionListener {
+            override fun onButtonClicked(buttonCode: Int) {
+                Log.i("button code", buttonCode.toString())
+            }
+
+            override fun onSearchStateChanged(enabled: Boolean) {
+                if (!enabled) {
+                    laundryRecView.apply {
+                        layoutManager = GridLayoutManager(context, 2)
+                        adapter = itemAdapter
+                    }
+                }
+            }
+
+            override fun onSearchConfirmed(text: CharSequence) {
+                searchItems(itemArr, text.toString())
             }
         })
     }
-    */
 
-    fun setupBackButton() {
-        // Set up back button
-        toolbar_laundry.setNavigationIcon(R.drawable.ic_home_black_24dp) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
-        toolbar_laundry.setNavigationOnClickListener {
-            // do something when click navigation
+    fun searchItems(itemArr: ArrayList<Item>, text: String) {
+        searchBarLaundry.disableSearch()
+        var foundItems = ArrayList<Item>()
+        val textLower = text.toLowerCase(Locale.ROOT)
+
+        for (item in itemArr) {
+            var itemTagsLower = item.tags.map{it.toLowerCase()}
+            if (item.category.toLowerCase(Locale.ROOT).contains(textLower) ||
+                itemTagsLower.any{ it.contains(textLower) }/*textLower in itemTagsLower*/) {
+                foundItems.add(item)
+            }
+        }
+
+        var itemAdapter = ItemAdapter(foundItems)
+        laundryRecView.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = itemAdapter
         }
     }
 
     fun sortRecView(sort_prop : String) {
-        val itemListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented")
-            }
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val items = dataSnapshot!!.children
-                val itemsArr : ArrayList<Item> = ArrayList<Item>()
-                items.forEach {
-                    val item: Item? = it.getValue<Item>()
-                    if (item != null) {
-                        if (item.laundry_status) {
-                            item.key = it.key!!
-                            itemsArr.add(item)
-                        }
-                    }
-                }
-                when (sort_prop) {
-                    SORT_BY_DATE_ADDED -> itemsArr.sortBy{ it.date_added }
-                    SORT_BY_WORN_FREQ_ASC -> itemsArr.sortBy{ it.worn_frequency }
-                    SORT_BY_WORN_FREQ_DESC -> itemsArr.sortByDescending { it.worn_frequency }
-                }
-
-                setupRecyclerView(itemsArr)
-            }
+        val itemsArr = laundry_items.map{it.copy()} as ArrayList<Item>
+        when (sort_prop) {
+            SORT_BY_DATE_ADDED -> itemsArr.sortBy{ it.date_added }
+            SORT_BY_WORN_FREQ_ASC -> itemsArr.sortBy{ it.worn_frequency }
+            SORT_BY_WORN_FREQ_DESC -> itemsArr.sortByDescending { it.worn_frequency }
         }
-        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
-        itemsListener = itemsListener
+        setupRecyclerView(itemsArr)
     }
 
     fun filterRecView(filter_prop : String) {
-        val itemListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented")
-            }
+        var itemsArr = ArrayList<Item>()
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val items = dataSnapshot!!.children
-                val itemsArr : ArrayList<Item> = ArrayList<Item>()
-                items.forEach {
-                    val item: Item? = it.getValue<Item>()
-                    if (item != null) {
-                        if (item.laundry_status && item.category == filter_prop) {
-                            item.key = it.key!!
-                            itemsArr.add(item)
-                        }
-                    }
-                }
-                setupRecyclerView(itemsArr)
+        for (item in laundry_items) {
+            if (item.category == filter_prop) {
+                itemsArr.add(item)
             }
         }
-        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+        setupRecyclerView(itemsArr)
     }
-
-    /*
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.closet_menu_options, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-     */
 }
