@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_stats_to_donate.*
 
 /**
@@ -24,9 +26,11 @@ class FragmentStatsToDonate : Fragment() {
     private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
     private var itemsReference : DatabaseReference = mDatabase.reference.child("/items")
     private var userReference : DatabaseReference = mDatabase.reference.child("/users")
+    private var mStorageRef : StorageReference = FirebaseStorage.getInstance().getReference("/images")
     private lateinit var itemsListener: ValueEventListener
     private var userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
     private lateinit var items_to_donate : ArrayList<Item>
+    private var NUM_DONATE = 2
 
     override fun onStart() {
         super.onStart()
@@ -47,7 +51,7 @@ class FragmentStatsToDonate : Fragment() {
                     }
                 }
                 itemsArr.sortBy{ it.worn_frequency }
-                items_to_donate = itemsArr.take(10).toList() as ArrayList<Item>
+                items_to_donate = itemsArr.take(NUM_DONATE).toList() as ArrayList<Item>
                 setupRecyclerView(items_to_donate)
             }
         }
@@ -122,6 +126,8 @@ class FragmentStatsToDonate : Fragment() {
             itemsReference.child(item.key).setValue(null)
             userReference.child(userUid).child("item_list").child(item.key).setValue(null)
             userReference.child(userUid).child("laundry_list").child(item.key).setValue(null)
+            var imgRef : StorageReference = mStorageRef.child("${item.img_name}")
+            imgRef.delete()
         }
 
         /*
