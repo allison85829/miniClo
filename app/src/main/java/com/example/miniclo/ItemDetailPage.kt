@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_item_detail_page.*
@@ -13,8 +14,11 @@ import kotlinx.android.synthetic.main.activity_item_detail_page.*
 class ItemDetailPage : AppCompatActivity() {
 
     var itemReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/items")
+    private var userReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/users")
+    private var userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
     lateinit var item : Item
 //    lateinit var del_btn : Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_detail_page)
@@ -83,6 +87,7 @@ class ItemDetailPage : AppCompatActivity() {
                         laundry_btn.text = "Remove From Laundry"
                         laundry_btn.setOnClickListener(View.OnClickListener {
                             curr_item_ref.child("laundry_status").setValue(false)
+                            userReference.child("$userUid/laundry_list/$item_key").setValue(null)
                         })
                     } else {
                         status_value.text = "Not in Laundry"
@@ -90,6 +95,7 @@ class ItemDetailPage : AppCompatActivity() {
                         laundry_btn.setOnClickListener(View.OnClickListener {
                             curr_item_ref.child("laundry_status").setValue(true)
                             curr_item_ref.child("worn_frequency").setValue(db_item!!.worn_frequency + 1)
+                            userReference.child("$userUid/laundry_list/$item_key").setValue(true)
                         })
                     }
                 }

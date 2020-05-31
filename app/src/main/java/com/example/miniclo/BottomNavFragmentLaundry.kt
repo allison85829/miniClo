@@ -29,9 +29,10 @@ import kotlin.collections.ArrayList
 class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
 
     private var mDatabase : FirebaseDatabase = FirebaseDatabase.getInstance()
-    private var itemsReference : DatabaseReference = mDatabase.reference.child("/items");
+    private var itemsReference : DatabaseReference = mDatabase.reference.child("/items")
     private lateinit var itemsListener: ValueEventListener
-    private var user : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private var userReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/users")
+    private var userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
     private var SORT_BY_WORN_FREQ_ASC = "sort by worn frequency asc"
     private var SORT_BY_WORN_FREQ_DESC = "sort by worn frequency desc"
     private var SORT_BY_DATE_ADDED = "sort by date added"
@@ -64,7 +65,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
             }
         }
 
-        itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+        itemsReference.orderByChild("user").equalTo(userUid).addListenerForSingleValueEvent(itemListener)
         this.itemsListener = itemListener
     }
 
@@ -179,7 +180,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
                         }
                     }
 
-                    itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+                    itemsReference.orderByChild("user").equalTo(userUid).addListenerForSingleValueEvent(itemListener)
                     true
                 }
             }
@@ -190,6 +191,7 @@ class BottomNavFragmentLaundry : androidx.fragment.app.Fragment() {
         for (item in laundry_items) {
             itemsReference.child(item.key).child("laundry_status").setValue(false)
         }
+        userReference.child("$userUid/laundry_list/").setValue(null)
         laundry_items = ArrayList<Item>()
         setupRecyclerView(laundry_items)
 

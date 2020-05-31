@@ -70,6 +70,7 @@ class SignupActivity : AppCompatActivity() {
                             newUser.email = email
                             newUser.uid = user.uid
                             newUser.item_list = HashMap<String, Boolean>()
+                            newUser.laundry_list = HashMap<String, Boolean>()
                         }
 
                         userReference.child(newUser.uid).setValue(newUser)

@@ -36,7 +36,7 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
     lateinit var userListener: ValueEventListener
     lateinit var user: FirebaseUser
     var total_item_count = 0
-    val laundry_count = 0
+    var laundry_count = 0
     //lateinit var item_count_text: TextView
     //private lateinit var listView : ListView
 
@@ -52,7 +52,7 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val userListener = object : ValueEventListener {
+        val userListenerItems = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
@@ -72,12 +72,25 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
             }
         }
         user = FirebaseAuth.getInstance().currentUser!!
-        userReference = Firebase.database.reference.child("/users/${user.uid}/item_list")
+        var userReferenceItems = Firebase.database.reference.child("/users/${user.uid}/item_list")
 //            .child(user.uid.toString())
 //            .child("item_list")
 //        userReference = Firebase.database.reference.child("/users").child(user.uid.toString())
 //            .child("item_list")
-        userReference.addValueEventListener(userListener)
+        userReferenceItems.addValueEventListener(userListenerItems)
+
+        val userListenerLaundry = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                laundry_count = dataSnapshot.childrenCount.toInt()
+                attachAdapter()
+            }
+        }
+        var userReferenceLaundry = Firebase.database.reference.child("/users/${user.uid}/laundry_list")
+        userReferenceLaundry.addValueEventListener(userListenerLaundry)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

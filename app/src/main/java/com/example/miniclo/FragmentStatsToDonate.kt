@@ -121,6 +121,7 @@ class FragmentStatsToDonate : Fragment() {
         for (item in items_to_donate) {
             itemsReference.child(item.key).setValue(null)
             userReference.child(userUid).child("item_list").child(item.key).setValue(null)
+            userReference.child(userUid).child("laundry_list").child(item.key).setValue(null)
         }
 
         /*
