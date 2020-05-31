@@ -57,7 +57,7 @@ public class AddItem extends AppCompatActivity {
     StorageReference mStorageRef;
     public Uri imguri;
     public Item item  = new Item();
-    public String res;
+    public String res, file_name;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
@@ -227,7 +227,7 @@ public class AddItem extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void FileUploader(View view) throws CameraAccessException, IOException {
         // Uploading file to Storage
-        String file_name = System.currentTimeMillis() + "." + getExtension(imguri);
+        file_name = System.currentTimeMillis() + "." + getExtension(imguri);
         StorageReference Ref = mStorageRef.child(file_name);
 
         FirebaseVisionImage image = null;
@@ -259,7 +259,7 @@ public class AddItem extends AppCompatActivity {
                         }
 //                        Toast.makeText(AddItem.this,
 //                                res, Toast.LENGTH_LONG).show();
-
+                        Log.i("FILE NAME", file_name);
                         item.setCategory(tags.get(0));
                         item.setDate_added(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
                         item.setLaundry_status(false);
@@ -283,6 +283,7 @@ public class AddItem extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
                                             Log.i("TASK ", "before push to firebase");
+                                            Log.i("FILE", file_name);
                                             Uri download = task.getResult();
                                             UploadItem(download, item);
                                             Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
@@ -301,7 +302,9 @@ public class AddItem extends AppCompatActivity {
     }
 
     public void UploadItem(Uri img_uri, Item item) {
+        Log.i("FILENAME", file_name);
         item.setImage(img_uri.toString());
+        item.setImg_name(file_name);
         itemReference = mDatabase.getReference().child("/items");
         userReference = mDatabase.getReference().child("/users");
 

@@ -1,18 +1,32 @@
 package com.example.miniclo
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_item_detail_page.*
 
 class ItemDetailPage : AppCompatActivity() {
 
     var itemReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/items")
+    var userReference: DatabaseReference =
+        FirebaseDatabase.getInstance().reference
+        .child("/users/${ FirebaseAuth.getInstance().currentUser?.uid}")
+    private lateinit var itemsListener: ValueEventListener
+    private lateinit var userListener: ValueEventListener
+    private var mStorageRef : StorageReference = FirebaseStorage.getInstance().getReference("/images")
     lateinit var item : Item
 //    lateinit var del_btn : Button
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +43,7 @@ class ItemDetailPage : AppCompatActivity() {
 
         setUpLaundryBtn(item.key)
         setUpActionBar()
+        setUpUser()
     }
 
 
@@ -55,12 +70,45 @@ class ItemDetailPage : AppCompatActivity() {
                 true
             }
             R.id.action_delete -> {
-                val popUpClass = PopUpClass()
-                popUpClass.showPopupWindow(findViewById(R.id.item_card), this.item.key)
+                val dialogBuilder = AlertDialog.Builder(this)
+
+                // set message of alert dialog
+                dialogBuilder.setMessage("Are you sure you want to delete item?")
+                    // if the dialog is cancelable
+                    .setCancelable(false)
+                    // positive button text and action
+                    .setPositiveButton("Delete", DialogInterface.OnClickListener {
+                            dialog, id ->
+                        deleteItem()
+                        dialog.cancel()
+                        finish()
+                    })
+                    // negative button text and action
+                    .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                            dialog, id -> dialog.cancel()
+                    })
+
+                // create dialog box
+                val alert = dialogBuilder.create()
+                // set title for alert dialog box
+//                alert.setTitle("Delete Confirmation")
+//                 show alert dialog
+                alert.show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun deleteItem() {
+        var dbRef : DatabaseReference = FirebaseDatabase.getInstance().reference
+        var update = HashMap<String, Any?>()
+        update.put("/items/${this.item.key}", null)
+        update.put("/users/${FirebaseAuth.getInstance().currentUser?.uid}/item_list/${this.item.key}", null)
+        update.put("/users/${FirebaseAuth.getInstance().currentUser?.uid}/laundry_list/${this.item.key}", null)
+        var imgRef : StorageReference = mStorageRef.child("${this.item.img_name}")
+        imgRef.delete()
+        dbRef.updateChildren(update)
     }
 
     fun setUpActionBar() {
@@ -100,4 +148,14 @@ class ItemDetailPage : AppCompatActivity() {
 
         curr_item_ref.addValueEventListener(itemListener as ValueEventListener)
     }
+
+    fun setUpUser() {
+        this.userListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {}
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+        this.userReference.addValueEventListener(this.userListener)
+    }
+
 }

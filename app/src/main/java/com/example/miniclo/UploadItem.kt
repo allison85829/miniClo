@@ -163,6 +163,7 @@ class UploadItem : AppCompatActivity() {
                 if (task.isSuccessful) {
                     Log.i("TASK ", "before push to firebase")
                     val download = task.result
+                    item.img_name = file_name
                     uploadImageToDB(download, item)
                     Toast.makeText(
                         this@UploadItem,

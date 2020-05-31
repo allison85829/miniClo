@@ -33,7 +33,8 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
     var user : FirebaseUser? = FirebaseAuth.getInstance().currentUser
     lateinit var edit_btn : Button
     private var usersReference : DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("/users/${FirebaseAuth.getInstance().currentUser?.uid}");
+        FirebaseDatabase.getInstance().reference
+            .child("/users/${FirebaseAuth.getInstance().currentUser?.uid}");
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
