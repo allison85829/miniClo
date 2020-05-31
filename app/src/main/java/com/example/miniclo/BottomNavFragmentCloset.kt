@@ -5,14 +5,18 @@ package com.example.miniclo
 //import kotlinx.android.synthetic.main.activity_main.date_added
 //import kotlinx.android.synthetic.main.activity_main.tags
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -20,7 +24,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
+import com.mancj.materialsearchbar.MaterialSearchBar
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_closet.*
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 /**
  * A simple [Fragment] subclass.
@@ -33,10 +41,7 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
     private var SORT_BY_WORN_FREQ_ASC = "sort by worn frequency asc"
     private var SORT_BY_WORN_FREQ_DESC = "sort by worn frequency desc"
     private var SORT_BY_DATE_ADDED = "sort by date added"
-    private val REQUEST_TO_DETAIL = 3
-    private val PERMISSION_CODE = 1000
-    private val IMAGE_CAPTURE_CODE = 1001
-    var imguri: Uri? = null
+    private var itemsArray = ArrayList<Item>()
 
     override fun onStart() {
         super.onStart()
@@ -61,6 +66,7 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
                         itemsArr.add(item)
                     }
                 }
+                itemsArray = itemsArr
                 setupRecyclerView(itemsArr)
             }
         }
@@ -217,17 +223,75 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
     }
 
     fun setupRecyclerView(itemArr: ArrayList<Item>) {
-        /*
-        val itemArr = arrayListOf<ItemTest>()
-
-        for (i in 0..100) {
-            itemArr.add(ItemTest("Test $i", "https://via.placeholder.com/350/CCCCCC/ff0000"))
-        }
-         */
-
+        var itemAdapter = ItemAdapter(itemArr)
         closetRecView.apply {
             layoutManager = GridLayoutManager(context, 2)
-            adapter = ItemAdapter(itemArr)
+            adapter = itemAdapter
+        }
+
+        setupSearchBar(itemArr, itemAdapter)
+    }
+
+    fun setupSearchBar(itemArr: ArrayList<Item>, itemAdapter: ItemAdapter) {
+        searchBarCloset?.addTextChangeListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                itemAdapter.getFilter().filter(charSequence)
+            }
+
+            override fun afterTextChanged(editable: Editable) {}
+        })
+
+        searchBarCloset?.setOnSearchActionListener( object : MaterialSearchBar.OnSearchActionListener {
+            override fun onButtonClicked(buttonCode: Int) {
+                Log.i("button code", buttonCode.toString())
+                /*when (buttonCode) {
+                    MaterialSearchBar.BUTTON_NAVIGATION -> {
+                    }
+                    MaterialSearchBar.BUTTON_SPEECH -> {
+                    }
+                    MaterialSearchBar.BUTTON_BACK -> searchBarCloset?.disableSearch()
+                }*/
+            }
+
+            override fun onSearchStateChanged(enabled: Boolean) {
+                if (!enabled) {
+                    closetRecView.apply {
+                        layoutManager = GridLayoutManager(context, 2)
+                        adapter = itemAdapter
+                    }
+                }
+            }
+
+            override fun onSearchConfirmed(text: CharSequence) {
+                searchItems(itemArr, text.toString())
+                /*
+                val imm: InputMethodManager =
+                    context!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+                 */
+            }
+        })
+    }
+
+    fun searchItems(itemArr: ArrayList<Item>, text: String) {
+        searchBarCloset?.disableSearch()
+        var foundItems = ArrayList<Item>()
+        val textLower = text.toLowerCase(Locale.ROOT)
+
+        for (item in itemArr) {
+            var itemTagsLower = item.tags.map{it.toLowerCase()}
+            if (item.category.toLowerCase(Locale.ROOT).contains(textLower) ||
+                itemTagsLower.any{ it.contains(textLower) }/*textLower in itemTagsLower*/) {
+                foundItems.add(item)
+            }
+        }
+
+        var itemAdapter = ItemAdapter(foundItems)
+        closetRecView.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = itemAdapter
         }
     }
 
@@ -281,6 +345,14 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
     }
 
     fun sortRecView(sort_prop : String) {
+        val itemsArr = itemsArray.map{it.copy()} as ArrayList<Item>
+        when (sort_prop) {
+            SORT_BY_DATE_ADDED -> itemsArr.sortBy{ it.date_added }
+            SORT_BY_WORN_FREQ_ASC -> itemsArr.sortBy{ it.worn_frequency }
+            SORT_BY_WORN_FREQ_DESC -> itemsArr.sortByDescending { it.worn_frequency }
+        }
+        setupRecyclerView(itemsArr)
+        /*
         val itemListener = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented")
@@ -306,9 +378,19 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
             }
         }
         itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+         */
     }
 
     fun filterRecView(filter_prop : String) {
+        var itemsArr = ArrayList<Item>()
+
+        for (item in itemsArray) {
+            if (item.category == filter_prop) {
+                itemsArr.add(item)
+            }
+        }
+        setupRecyclerView(itemsArr)
+        /*
         val itemListener = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented")
@@ -330,6 +412,8 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
             }
         }
         itemsReference.orderByChild("user").equalTo(user).addListenerForSingleValueEvent(itemListener)
+
+         */
     }
 
     /*

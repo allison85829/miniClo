@@ -41,7 +41,7 @@
 
             <com.mancj.materialsearchbar.MaterialSearchBar
                 app:mt_speechMode="true"
-                app:mt_hint="Custom hint"
+                app:mt_hint="Search for item categories or tags"
                 app:theme="@style/AppTheme.PopupOverlay"
                 app:mt_maxSuggestionsCount="5"
                 android:layout_width="match_parent"

@@ -8,7 +8,8 @@ data class User(
     var email: String = "",
     var uid: String = "",
     var user_name: String = "",
-    var item_list: MutableMap<String, Boolean> = HashMap()
+    var item_list: MutableMap<String, Boolean> = HashMap(),
+    var laundry_list: MutableMap<String, Boolean> = HashMap()
 ) {
     @Exclude
     fun toMap(): Map<String, Any?> {
@@ -16,7 +17,8 @@ data class User(
             "email" to email,
             "uid" to uid,
             "user_name" to user_name,
-            "item_list" to item_list
+            "item_list" to item_list,
+            "laundry_list" to laundry_list
         )
     }
 }
