@@ -70,9 +70,12 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:layout_marginBottom="24dp"
-                android:src="@android:drawable/ic_input_add"
-                android:background="#FFFFFF"
-                app:backgroundTint="@color/colorAccent"/>
+                android:background="#00FFFFFF"
+                android:src="@drawable/ic_add_foreground"
+                android:tint="#00FFFFFF"
+                app:backgroundTint="#FFFFFF"
+                app:maxImageSize="95dp"
+                tools:ignore="VectorDrawableCompat" />
         </FrameLayout>
 
 

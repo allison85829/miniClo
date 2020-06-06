@@ -45,7 +45,6 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar_account)
 
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_bottom_nav_fragment_account, container, false)
     }
@@ -72,6 +71,11 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
             val intent = Intent(activity, UpdatePassword::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setUpUserInfo()
     }
 
     /*

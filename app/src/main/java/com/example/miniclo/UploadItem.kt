@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_upload_item.*
@@ -119,9 +121,14 @@ class UploadItem : AppCompatActivity() {
         val labeler = FirebaseVision.getInstance().cloudImageLabeler
         val vision_img = VisionImage()
         val rotation = vision_img.getRotationCompensation("1", this@UploadItem, this@UploadItem)
+        getLalels(labeler, image)
+    }
+
+    private fun getLalels(labeler: FirebaseVisionImageLabeler, image: FirebaseVisionImage?) {
         labeler.processImage(image!!)
             .addOnSuccessListener { labels ->
                 res = ""
+                var categorizer : Categorizer = Categorizer()
                 val tags = ArrayList<String>()
                 for (label in labels) {
                     tags.add(label.text)
@@ -130,7 +137,15 @@ class UploadItem : AppCompatActivity() {
                     val confidence = label.confidence
                     res += "$text, $entityId, $confidence\n"
                 }
-                item.category = tags[0]
+                var cat = categorizer.getCategory(tags)
+//                item.category = tags[0]
+//                Log.i("RESULT", res)
+//                var t : String = ""
+//                for (tag in tags) {
+//                    t += tag + "\n"
+//                }
+//                Log.i("TAGS", t)
+                item.category = cat
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     item.date_added = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
                 }
@@ -139,14 +154,13 @@ class UploadItem : AppCompatActivity() {
                 item.worn_frequency = 0
 
                 category_value.setText(item.category)
-                tag_1_value.setText(item.tags[1])
-                tag_2_value.setText(item.tags[2])
-                tag_3_value.setText(item.tags[3])
-                tag_4_value.setText(item.tags[4])
+                tag_1_value.setText(item.tags[0])
+                tag_2_value.setText(item.tags[1])
+                tag_3_value.setText(item.tags[2])
+                tag_4_value.setText(item.tags[3])
             }
             .addOnFailureListener { }
     }
-
     private fun uploadImage(view: View) {
         val file_name = System.currentTimeMillis().toString() + "." + getExtension(imgUri!!)
         val Ref: StorageReference = mStorageRef!!.child(file_name)

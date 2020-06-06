@@ -68,8 +68,10 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
             updateUserInfo()
             // go back to user account page
             val acc_info : BottomNavFragmentAccount = BottomNavFragmentAccount()
+            val edit_acc : EditAccountInfo = EditAccountInfo()
             val transaction : FragmentTransaction = parentFragmentManager.beginTransaction()
             transaction.replace(R.id.layout_edit_account, acc_info)
+            transaction.remove(edit_acc)
             transaction.commit()
         }
     }
