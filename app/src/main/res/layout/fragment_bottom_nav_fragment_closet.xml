@@ -74,7 +74,7 @@
                 android:src="@drawable/ic_add_foreground"
                 android:tint="#00FFFFFF"
                 app:backgroundTint="#FFFFFF"
-                app:maxImageSize="95dp"
+                app:maxImageSize="87dp"
                 tools:ignore="VectorDrawableCompat" />
         </FrameLayout>
 

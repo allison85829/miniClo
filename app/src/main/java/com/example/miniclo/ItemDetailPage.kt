@@ -1,22 +1,27 @@
 package com.example.miniclo
 
-import android.app.AlertDialog
+import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Layout
+import android.text.SpannableString
+import android.text.style.AlignmentSpan
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_item_detail_page.*
+
 
 class ItemDetailPage : AppCompatActivity() {
 
@@ -27,7 +32,6 @@ class ItemDetailPage : AppCompatActivity() {
     private var userReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/users")
     private var userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
     lateinit var item : Item
-//    lateinit var del_btn : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +62,7 @@ class ItemDetailPage : AppCompatActivity() {
         return true
     }
 
+    @SuppressLint("ResourceType")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
@@ -70,10 +75,18 @@ class ItemDetailPage : AppCompatActivity() {
                 true
             }
             R.id.action_delete -> {
-                val dialogBuilder = AlertDialog.Builder(this)
+                val dialogBuilder = androidx.appcompat.app.AlertDialog.Builder(this, R.style.AlertDialog)
+                val title = SpannableString("Delete Item?")
 
+                // alert dialog title align center
+                title.setSpan(
+                    AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),
+                    0,
+                    title.length,
+                    0
+                )
                 // set message of alert dialog
-                dialogBuilder.setMessage("Are you sure you want to delete item?")
+                dialogBuilder.setTitle(title)
                     // if the dialog is cancelable
                     .setCancelable(false)
                     // positive button text and action
@@ -90,9 +103,7 @@ class ItemDetailPage : AppCompatActivity() {
 
                 // create dialog box
                 val alert = dialogBuilder.create()
-                // set title for alert dialog box
-//                alert.setTitle("Delete Confirmation")
-//                 show alert dialog
+                // show alert dialog
                 alert.show()
                 true
             }
