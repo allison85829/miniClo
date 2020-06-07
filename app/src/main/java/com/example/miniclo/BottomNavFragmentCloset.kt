@@ -127,32 +127,6 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
         toolbar_closet.inflateMenu(R.menu.closet_menu_options)
         toolbar_closet.setOnMenuItemClickListener {
             when (it.itemId) {
-//                R.id.action_filter -> {
-//                    // do something
-//                    // build alert dialog
-//                    val dialogBuilder = AlertDialog.Builder(activity)
-//
-//                    // set message of alert dialog
-//                    dialogBuilder.setMessage("Testing Alert Dialog")
-//                        // if the dialog is cancelable
-//                        .setCancelable(false)
-//                        // positive button text and action
-//                        .setPositiveButton("Proceed", DialogInterface.OnClickListener {
-//                                dialog, id -> dialog.cancel()
-//                        })
-//                        // negative button text and action
-//                        .setNegativeButton("Cancel", DialogInterface.OnClickListener {
-//                                dialog, id -> dialog.cancel()
-//                        })
-//
-//                    // create dialog box
-//                    val alert = dialogBuilder.create()
-//                    // set title for alert dialog box
-//                    alert.setTitle("AlertDialogExample")
-//                    // show alert dialog
-//                    alert.show()
-//                    true
-//                }
                 R.id.sort_by_option -> {
                     val sort_options = arrayOf("Date Added", "Most Frequently Worn", "Least Frequently Worn")
                     val builder = AlertDialog.Builder(context)

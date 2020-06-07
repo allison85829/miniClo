@@ -90,7 +90,7 @@ class FragmentStatsToDonate : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Set up back button
-        toolbar_to_donate.setNavigationIcon(R.drawable.ic_home_black_24dp) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
+        toolbar_to_donate.setNavigationIcon(R.drawable.ic_back) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
         toolbar_to_donate.setNavigationOnClickListener {
             // do something when click navigation
             //(activity as AppCompatActivity).finish()

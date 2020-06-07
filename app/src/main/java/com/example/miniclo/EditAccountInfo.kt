@@ -25,6 +25,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_bottom_nav_fragment_account.*
+import kotlinx.android.synthetic.main.fragment_edit_account_info.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 
@@ -53,6 +54,14 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        toolbar_edit_account.setNavigationIcon(R.drawable.ic_back) // need to set the icon here to have a navigation icon. You can simple create an vector image by "Vector Asset" and using here
+        toolbar_edit_account.setNavigationOnClickListener {
+            // do something when click navigation
+            //(activity as AppCompatActivity).finish()
+            getFragmentManager()?.popBackStackImmediate()
+        }
+
         progressbar_pic = getView()!!.findViewById(R.id.progressbar_pic)
         img_view = getView()!!.findViewById(R.id.profile_pic)
         user_name_input =  getView()!!.findViewById(R.id.user_name_text)
