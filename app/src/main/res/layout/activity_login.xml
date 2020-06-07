@@ -47,7 +47,9 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="32dp"
-            android:text="@string/login_btn"/>
+            android:text="@string/login_btn"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorButton"/>
 
         <TextView
             android:id="@+id/reset_pass_tv"
@@ -96,7 +98,9 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
-            android:text="@string/signup_btn" />
+            android:text="@string/signup_btn"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorButton"/>
 
     </LinearLayout>
 

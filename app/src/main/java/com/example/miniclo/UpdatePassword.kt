@@ -51,5 +51,12 @@ class UpdatePassword : AppCompatActivity() {
                     })
             }
         }
+
+        setUpActionBar()
+    }
+
+    fun setUpActionBar() {
+        val actionbar = supportActionBar
+        actionbar!!.title = "Update Password"
     }
 }

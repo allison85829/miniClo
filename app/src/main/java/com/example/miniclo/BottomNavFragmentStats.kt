@@ -63,10 +63,6 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
                 // and call it after all getting the total item count and the laundry count
 //                attachAdapter()
 
-                if (view != null) {
-                    item_count?.text = dataSnapshot.childrenCount.toString()
-                }
-
                 total_item_count = dataSnapshot.childrenCount.toInt()
                 attachAdapter()
             }
