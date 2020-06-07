@@ -39,6 +39,9 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObject;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -238,9 +241,39 @@ public class AddItem extends AppCompatActivity {
         }
 
         FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance().getCloudImageLabeler();
+        FirebaseVisionObjectDetectorOptions options =
+                new FirebaseVisionObjectDetectorOptions.Builder()
+                        .setDetectorMode(FirebaseVisionObjectDetectorOptions.SINGLE_IMAGE_MODE)
+                        .enableMultipleObjects()
+                        .enableClassification()  // Optional
+                        .build();
+        FirebaseVisionObjectDetector obj_detector =  FirebaseVision.getInstance().getOnDeviceObjectDetector(options);
+
         VisionImage vision_img = new VisionImage();
         int rotation = vision_img.getRotationCompensation("1", AddItem.this, AddItem.this);
 
+        FirebaseVisionImage finalImage = image;
+        obj_detector.processImage(image)
+                .addOnSuccessListener(
+                        new OnSuccessListener<List<FirebaseVisionObject>>() {
+                            @Override
+                            public void onSuccess(List<FirebaseVisionObject> detectedObjects) {
+                                // Task completed successfully
+                                Log.i("OBJECT", Integer.toString(detectedObjects.get(0).getClassificationCategory()));
+                                getLabels(view, labeler, finalImage, Ref);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Task failed with an exception
+                                // ...
+                            }
+                        });
+    }
+
+    public void getLabels(View view, FirebaseVisionImageLabeler labeler, FirebaseVisionImage image, StorageReference Ref) {
         labeler.processImage(image)
                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -271,7 +304,6 @@ public class AddItem extends AppCompatActivity {
                                 .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                     @Override
                                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                        Log.i("TASK ", "Continue task");
                                         if (!task.isSuccessful()) {
                                             throw task.getException();
                                         }
@@ -282,11 +314,11 @@ public class AddItem extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
-                                            Log.i("TASK ", "before push to firebase");
-                                            Log.i("FILE", file_name);
                                             Uri download = task.getResult();
                                             UploadItem(download, item);
-                                            Toast.makeText(AddItem.this, "Image Uploaded Successfully", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(AddItem.this,
+                                                    "Image Uploaded Successfully",
+                                                    Toast.LENGTH_LONG).show();
                                             toItemDetail(view, item);
                                         }
                                     }
