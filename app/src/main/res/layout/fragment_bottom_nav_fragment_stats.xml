@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+   android:id="@+id/layout_stats"
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+   xmlns:tools="http://schemas.android.com/tools"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   tools:context=".BottomNavFragmentStats">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent">
+
+      <com.google.android.material.appbar.AppBarLayout
+          android:id="@+id/appbar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:theme="@style/AppTheme.AppBarOverlay">
+
+         <androidx.appcompat.widget.Toolbar
+             android:id="@+id/toolbar_stats"
+             android:layout_width="match_parent"
+             android:layout_height="?attr/actionBarSize"
+             app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:id="@+id/toolbar_stats_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:singleLine="true"
+                android:text="My Closet Stats"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+         </androidx.appcompat.widget.Toolbar>
+
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <ListView
+          android:id="@+id/stats_list_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_weight="1"></ListView>
+
+      <Button
+          android:id="@+id/recc_donations_btn"
+          android:layout_width="match_parent"
+          android:layout_height="56dp"
+          android:layout_marginLeft="60dp"
+          android:layout_marginRight="60dp"
+          android:layout_marginBottom="80dp"
+          android:text="@string/suggest_donations"
+          android:textColor="@color/white"
+          android:backgroundTint="@color/colorButton"
+          app:layout_constraintEnd_toStartOf="@id/stats_list_view" />
+
+   </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

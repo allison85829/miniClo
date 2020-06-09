@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BottomNavFragmentCloset">
+
+    <!-- Overflow Options -->
+    <item
+        android:id="@+id/sort_by_option"
+        android:title="@string/sort_by_title"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/filter_by_option"
+        android:title="@string/filter_by_title"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/show_all_option"
+        android:title="@string/show_all_title"
+        app:showAsAction="never"/>
+</menu>
