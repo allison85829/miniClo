@@ -54,14 +54,9 @@ class BottomNavFragmentCloset : androidx.fragment.app.Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val items = dataSnapshot!!.children
                 val itemsArr : ArrayList<Item> = ArrayList<Item>()
-                //val items  = dataSnapshot.getValue<Item>();
-//                category.text = item?.category
                 items.forEach {
-                    //Log.i("Item", it.toString())
                     val item: Item? = it.getValue<Item>()
-                    //Log.i("Item", item.toString())
                     if (item != null) {
-                        //Log.i("id in item", item.user)
                         item.key = it.key!!
                         itemsArr.add(item)
                     }

@@ -33,7 +33,6 @@ class UploadItem : AppCompatActivity() {
     var res: String? = null
     var user: FirebaseUser? = null
     var item_key: String? = null
-    var cat = arrayOf("top", "bottom", "hat", "dress", "shoe", "accessory")
 
     private val mDatabase = FirebaseDatabase.getInstance()
     private var storageRef: StorageReference? = null
@@ -58,7 +57,6 @@ class UploadItem : AppCompatActivity() {
         processImage()
 
         upload_btn.setOnClickListener(View.OnClickListener { view ->
-            Log.i("ADD ITEM ", "upload btn clicked *****")
             try {
                 //FileUploader(view)
                 uploadImage(view)
@@ -107,7 +105,7 @@ class UploadItem : AppCompatActivity() {
         userReference = mDatabase.reference
         userReference!!.child("/users").push().addValueEventListener(userListener!!)
         itemReference!!.child("/items").push().addValueEventListener(itemListener!!)
-        mStorageRef = FirebaseStorage.getInstance().getReference("/images")
+        mStorageRef = FirebaseStorage.getInstance().getReference("/item_images")
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -138,13 +136,6 @@ class UploadItem : AppCompatActivity() {
                     res += "$text, $entityId, $confidence\n"
                 }
                 var cat = categorizer.getCategory(tags)
-//                item.category = tags[0]
-//                Log.i("RESULT", res)
-//                var t : String = ""
-//                for (tag in tags) {
-//                    t += tag + "\n"
-//                }
-//                Log.i("TAGS", t)
                 item.category = cat
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     item.date_added = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
@@ -190,7 +181,7 @@ class UploadItem : AppCompatActivity() {
     }
 
     private fun uploadImageToDB(img_uri: Uri?, item: Item) {
-        item.image = img_uri.toString()
+        item.img_url = img_uri.toString()
         itemReference = mDatabase.getReference().child("/items")
         userReference = mDatabase.getReference().child("/users")
 
@@ -200,108 +191,5 @@ class UploadItem : AppCompatActivity() {
         itemReference!!.child(item_key!!).setValue(item)
 
         userReference!!.child(user!!.uid + "/item_list/" + item_key).setValue(true)
-
-        /*
-        val item_count_ref: DatabaseReference = userReference!!.child(user!!.getUid()).child("total_item")
-        item_count_ref.runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val currentValue = mutableData.getValue(Int::class.java)
-                if (currentValue == null) {
-                    mutableData.value = 1
-                } else {
-                    mutableData.value = currentValue + 1
-                }
-                return Transaction.success(mutableData)
-            }
-
-            override fun onComplete(
-                databaseError: DatabaseError?,
-                committed: Boolean,
-                dataSnapshot: DataSnapshot?
-            ) {
-                println("Transaction completed")
-            }
-        })
-         */
     }
-
-    /*
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Throws(CameraAccessException::class, IOException::class)
-    private fun FileUploader(view: View) {
-        // Uploading file to Storage
-        val file_name = System.currentTimeMillis().toString() + "." + getExtension(imgUri!!)
-        val Ref: StorageReference = mStorageRef!!.child(file_name)
-        var image: FirebaseVisionImage? = null
-        try {
-            image = FirebaseVisionImage.fromFilePath(this@UploadItem, imgUri!!)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        val labeler = FirebaseVision.getInstance().cloudImageLabeler
-        val vision_img = VisionImage()
-        val rotation = vision_img.getRotationCompensation("1", this@UploadItem, this@UploadItem)
-        labeler.processImage(image!!)
-            .addOnSuccessListener { labels ->
-                res = ""
-                val tags = ArrayList<String>()
-                for (label in labels) {
-                    tags.add(label.text)
-                    val text = label.text
-                    val entityId = label.entityId
-                    val confidence = label.confidence
-                    res += "$text, $entityId, $confidence\n"
-                }
-                //                        Toast.makeText(AddItem.this,
-                //                                res, Toast.LENGTH_LONG).show();
-                item.category = tags[0]
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    item.date_added = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
-                }
-                item.laundry_status = false
-                item.tags = tags
-                item.worn_frequency = 0
-                //val finalRes: String = res
-
-                Ref.putFile(imgUri!!)
-                    .continueWithTask { task ->
-                        Log.i("TASK ", "Continue task")
-                        if (!task.isSuccessful) {
-                            throw task.exception!!
-                        }
-                        Ref.downloadUrl
-                    }
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.i("TASK ", "before push to firebase")
-                            val download = task.result
-                            UploadItem(download, item)
-                            Toast.makeText(
-                                this@UploadItem,
-                                "Item Uploaded Successfully",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            finish()
-                        }
-                    }
-            }
-            .addOnFailureListener { }
-    }
-
-    fun UploadItem(img_uri: Uri?, item: Item) {
-        item.image = img_uri.toString()
-        itemReference = mDatabase.getReference().child("/items")
-        userReference = mDatabase.getReference().child("/users")
-
-        // add user id to item object
-        item.user = user!!.getUid()
-        item_key = itemReference!!.push().getKey()
-        itemReference!!.child(item_key!!).setValue(item)
-        val list_entry_key: String =
-            userReference!!.child(user!!.getUid()).child("item_list").push().getKey()!!
-
-        userReference!!.child(user!!.getUid()).child("item_list").child(list_entry_key)
-            .setValue(item_key)
-    }
-     */
 }

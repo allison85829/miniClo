@@ -47,7 +47,6 @@ class SignupActivity : AppCompatActivity() {
 
             }
         }
-//        userReference = Firebase.database.reference.child("users")
         userReference = mDatabase.getReference().child("/users")
         userReference.addValueEventListener(userListener)
 
@@ -67,14 +66,14 @@ class SignupActivity : AppCompatActivity() {
                         val newUser : User =
                             User()
                         if (user != null) {
-                            newUser.email = email
-                            newUser.uid = user.uid
+//                            newUser.email = email
+//                            newUser.uid = user.uid
                             newUser.item_list = HashMap<String, Boolean>()
                             newUser.laundry_list = HashMap<String, Boolean>()
                         }
 
-                        userReference.child(newUser.uid).setValue(newUser)
-
+//                        userReference.child(newUser.uid).setValue(newUser)
+                        userReference.child(FirebaseAuth.getInstance().currentUser?.uid!!).setValue(newUser)
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
                         finish()

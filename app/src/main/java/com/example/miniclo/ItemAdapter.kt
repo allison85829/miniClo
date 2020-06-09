@@ -21,8 +21,7 @@ class ItemAdapter(private val items: ArrayList<Item>) : RecyclerView.Adapter<Ite
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Picasso.get().load(filteredItems[position].image).into(holder.image)
-        //holder.title.text = filteredItems[position].category
+        Picasso.get().load(filteredItems[position].img_url).into(holder.image)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -72,7 +71,6 @@ class ItemAdapter(private val items: ArrayList<Item>) : RecyclerView.Adapter<Ite
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.findViewById(R.id.rec_item_photo)
-        //val title: TextView = itemView.findViewById(R.id.rec_item_title)
     }
 }
 

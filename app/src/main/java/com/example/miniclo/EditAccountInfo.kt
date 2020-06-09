@@ -160,11 +160,6 @@ class EditAccountInfo :  androidx.fragment.app.Fragment() {
             if (uploadTask.isSuccessful) {
                 storageRef.downloadUrl.addOnCompleteListener { urlTask ->
                     urlTask.result?.let {
-//                        Toast.makeText(
-//                            activity,
-//                            "Uploaded",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
                     }
                 }
             } else {

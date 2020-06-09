@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity() {
             val detail = data!!.getStringExtra("message")
             //            textView.setText(detail);
             Log.i("---------- Msg", detail)
-            //            res_img.setImageURI(imguri);
         }
     }
 

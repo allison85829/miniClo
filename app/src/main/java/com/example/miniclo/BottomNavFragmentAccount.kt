@@ -38,11 +38,6 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-        //(activity as AppCompatActivity).setSupportActionBar(account_toolbar)
-        //(activity as AppCompatActivity).getSupportActionBar()?.setTitle("Account");
-        //setHasOptionsMenu(true)
-
         (activity as AppCompatActivity).setSupportActionBar(toolbar_account)
 
         // Inflate the layout for this fragment
@@ -78,11 +73,6 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
         setUpUserInfo()
     }
 
-    /*
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.your_menu, menu)
-    }*/
-
     private fun setUpUserInfo() {
         profile_pic = getView()!!.findViewById(R.id.imageView2)
         val storageRef = FirebaseStorage.getInstance()
@@ -106,7 +96,7 @@ class BottomNavFragmentAccount : androidx.fragment.app.Fragment() {
                 val user_obj = dataSnapshot!!.getValue<User>()
                 Log.i("USER ", user_obj?.user_name)
                 user_name.setText(user_obj?.user_name)
-                user_email.setText(user_obj?.email)
+                user_email.setText(FirebaseAuth.getInstance().currentUser?.email)
             }
         }
         usersReference.addValueEventListener(usersListener)

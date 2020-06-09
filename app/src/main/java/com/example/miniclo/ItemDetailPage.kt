@@ -28,7 +28,7 @@ class ItemDetailPage : AppCompatActivity() {
     var itemReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/items")
     private lateinit var itemsListener: ValueEventListener
     private lateinit var userListener: ValueEventListener
-    private var mStorageRef : StorageReference = FirebaseStorage.getInstance().getReference("/images")
+    private var mStorageRef : StorageReference = FirebaseStorage.getInstance().getReference("/item_images")
     private var userReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("/users")
     private var userUid : String = FirebaseAuth.getInstance().currentUser?.uid.toString()
     lateinit var item : Item
@@ -43,7 +43,7 @@ class ItemDetailPage : AppCompatActivity() {
         tag_2.text = item.tags[1]
         tag_3.text = item.tags[2]
         item_date_added_value.text = item.date_added
-        Picasso.get().load(item.image).into(uploadImgPreview)
+        Picasso.get().load(item.img_url).into(uploadImgPreview)
 
         setUpLaundryBtn(item.key)
         setUpActionBar()

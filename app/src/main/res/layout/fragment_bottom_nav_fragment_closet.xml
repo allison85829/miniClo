@@ -74,31 +74,6 @@
                 app:srcCompat="@drawable/ic_plus"
                 app:backgroundTint="@color/colorAccent"/>
         </FrameLayout>
-
-
-        <!--    <ListView-->
-        <!--        android:id="@+id/mListView"-->
-        <!--        android:layout_width="match_parent"-->
-        <!--        android:layout_height="match_parent">-->
-        <!--    </ListView>-->
-
-        <!--
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:src="@drawable/jetpack_chart"/>
-    -->
-        <!---
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_item_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:tint="#FFFFFF"
-            app:srcCompact="@drawable/ic_android_black_24dp"/>
-         -->
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

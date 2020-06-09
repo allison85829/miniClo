@@ -42,7 +42,12 @@ class FragmentStatsLeastWorn : Fragment() {
                     }
                 }
                 itemsArr.sortBy{ it.worn_frequency }
-                setupRecyclerView(itemsArr.take(10) as ArrayList<Item>)
+                if (itemsArr.size == 1) {
+                    setupRecyclerView(itemsArr)
+                } else {
+                    setupRecyclerView(itemsArr.take(10) as ArrayList<Item>)
+                }
+
             }
         }
 
@@ -65,13 +70,6 @@ class FragmentStatsLeastWorn : Fragment() {
         // Adds back button to get back to map
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        /*
-        back_most_worn.setOnClickListener{
-            (activity as AppCompatActivity).finish()
-        }
-
-         */
 
         return inflater.inflate(R.layout.fragment_stats_least_worn, container, false)
     }

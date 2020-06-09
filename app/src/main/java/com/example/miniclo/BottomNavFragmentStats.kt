@@ -1,6 +1,5 @@
 package com.example.miniclo
 
-
 //import android.R
 import android.content.Intent
 import android.os.Bundle
@@ -37,8 +36,6 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
     lateinit var user: FirebaseUser
     var total_item_count = 0
     var laundry_count = 0
-    //lateinit var item_count_text: TextView
-    //private lateinit var listView : ListView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,21 +55,12 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                //statListItems[0] = "Total Item Count: " + dataSnapshot.childrenCount.toString()
-                // move the code for attach the adapter into the function
-                // and call it after all getting the total item count and the laundry count
-//                attachAdapter()
-
                 total_item_count = dataSnapshot.childrenCount.toInt()
                 attachAdapter()
             }
         }
         user = FirebaseAuth.getInstance().currentUser!!
         var userReferenceItems = Firebase.database.reference.child("/users/${user.uid}/item_list")
-//            .child(user.uid.toString())
-//            .child("item_list")
-//        userReference = Firebase.database.reference.child("/users").child(user.uid.toString())
-//            .child("item_list")
         userReferenceItems.addValueEventListener(userListenerItems)
 
         val userListenerLaundry = object : ValueEventListener {
@@ -108,57 +96,6 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
             transaction.commit()
         }
     }
-
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val userListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                //statListItems[0] = "Total Item Count: " + dataSnapshot.childrenCount.toString()
-                // move the code for attach the adapter into the function
-                // and call it after all getting the total item count and the laundry count
-//                attachAdapter()
-
-                if (view != null) {
-                    item_count!!.text = dataSnapshot.childrenCount.toString()
-                }
-
-                total_item_count = dataSnapshot.childrenCount.toInt()
-
-                attachAdapter()
-            }
-        }
-        user = FirebaseAuth.getInstance().currentUser!!
-        userReference = Firebase.database.reference
-            .child("/users/${user.uid}/item_list")
-//            .child(user.uid.toString())
-//            .child("item_list")
-//        userReference = Firebase.database.reference.child("/users").child(user.uid.toString())
-//            .child("item_list")
-        userReference.addValueEventListener(userListener)
-
-        recc_donations_btn.setOnClickListener {
-            // Create new fragment and transaction
-            val newFragment: Fragment = FragmentStatsToDonate()
-            // consider using Java coding conventions (upper first char class names!!!)
-            // consider using Java coding conventions (upper first char class names!!!)
-            val transaction: FragmentTransaction = fragmentManager!!.beginTransaction()
-
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack
-            transaction.add((getView()!!.parent as ViewGroup).id, newFragment)
-            transaction.addToBackStack(null)
-
-            // Commit the transaction
-            transaction.commit()
-        }
-    }
-
-     */
 
     fun attachAdapter(/*item_count : Int, laundry_count : Int*/) {
 
@@ -206,32 +143,3 @@ class BottomNavFragmentStats : androidx.fragment.app.Fragment() {
         }
         }
 }
-
-                /*
-                if (i < 2) {
-                    Toast.makeText(activity, i.toString(), Toast.LENGTH_SHORT).show()
-                }
-                else {
-                    // Create new fragment and transaction
-                    val newFragment: Fragment = FragmentStatsMostWorn()
-                    // consider using Java coding conventions (upper first char class names!!!)
-                    // consider using Java coding conventions (upper first char class names!!!)
-                    val transaction: FragmentTransaction = fragmentManager!!.beginTransaction()
-
-                    // Replace whatever is in the fragment_container view with this fragment,
-                    // and add the transaction to the back stack
-                    transaction.add((getView()!!.parent as ViewGroup).id, newFragment)
-                    transaction.addToBackStack(null)
-
-                    // Commit the transaction
-                    transaction.commit()
-                }
-                //val intent = Intent(activity, AddItem::class.java)
-                //startActivity(intent)
-            }
-
-        })*/
-        /*
-        val adapter2 = ArrayAdapter(activity, R.layout.stat_list_row, R.id.stat_row_text_view/*android.R.layout.simple_list_item_1*/, statListItems)
-        stats_list_view2.adapter = adapter2
-         */

@@ -51,8 +51,12 @@ class FragmentStatsToDonate : Fragment() {
                     }
                 }
                 itemsArr.sortBy{ it.worn_frequency }
-                items_to_donate = itemsArr.take(NUM_DONATE).toList() as ArrayList<Item>
-                setupRecyclerView(items_to_donate)
+                if (itemsArr.size == 1) {
+                    setupRecyclerView(itemsArr)
+                } else {
+                    items_to_donate = itemsArr.take(NUM_DONATE).toList() as ArrayList<Item>
+                    setupRecyclerView(items_to_donate)
+                }
             }
         }
 

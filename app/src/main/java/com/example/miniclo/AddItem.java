@@ -135,17 +135,12 @@ public class AddItem extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("ACT ", "Resumed");
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        Log.i("ACT ", "Started");
-//        Resources res = getResources();
-//        Drawable gallery_icon = ResourcesCompat.getDrawable(res, R.drawable.image_gallery_100, null);
-//        img.setImageDrawable(gallery_icon);
     }
 
     private void FileSelector() {
@@ -212,12 +207,7 @@ public class AddItem extends AppCompatActivity {
         }
 
         if (requestCode == REQUEST_TO_DETAIL && resultCode == RESULT_OK) {
-//            TextView textView = (TextView)findViewById(R.id.item_detail);
-//            ImageView res_img = (ImageView)findViewById(R.id.detail_img);
             String detail = data.getStringExtra("message");
-//            textView.setText(detail);
-            Log.i("---------- Msg", detail);
-//            res_img.setImageURI(imguri);
         }
     }
 
@@ -290,9 +280,7 @@ public class AddItem extends AppCompatActivity {
                             float confidence = label.getConfidence();
                             res += text + ", " + entityId + ", " + confidence + "\n";
                         }
-//                        Toast.makeText(AddItem.this,
-//                                res, Toast.LENGTH_LONG).show();
-                        Log.i("FILE NAME", file_name);
+
                         item.setCategory(tags.get(0));
                         item.setDate_added(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
                         item.setLaundry_status(false);
@@ -335,7 +323,7 @@ public class AddItem extends AppCompatActivity {
 
     public void UploadItem(Uri img_uri, Item item) {
         Log.i("FILENAME", file_name);
-        item.setImage(img_uri.toString());
+        item.setImg_url(img_uri.toString());
         item.setImg_name(file_name);
         itemReference = mDatabase.getReference().child("/items");
         userReference = mDatabase.getReference().child("/users");
